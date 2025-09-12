@@ -36,10 +36,10 @@ const Header = () => {
           {/* CTA Buttons */}
           <div className="flex items-center space-x-3">
             <Button variant="ghost" asChild>
-              <a href="/dashboard">Dashboard</a>
+              <a href="/login">Entrar</a>
             </Button>
-            <Button variant="hero" size="lg">
-              Começar Grátis
+            <Button variant="hero" size="lg" asChild>
+              <a href="/register">Começar Grátis</a>
             </Button>
           </div>
 
@@ -69,8 +69,12 @@ const Header = () => {
                 Contato
               </a>
               <div className="flex flex-col space-y-2 pt-4 border-t border-border">
-                <Button variant="ghost" className="justify-start">Entrar</Button>
-                <Button variant="hero">Começar Grátis</Button>
+                <Button variant="ghost" className="justify-start" asChild>
+                  <a href="/login">Entrar</a>
+                </Button>
+                <Button variant="hero" asChild>
+                  <a href="/register">Começar Grátis</a>
+                </Button>
               </div>
             </nav>
           </div>

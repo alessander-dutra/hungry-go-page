@@ -21,12 +21,14 @@ const Footer = () => {
               Junte-se a mais de 1.000 restaurantes que já escolheram a liberdade e a tecnologia.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="premium" size="xl" className="group bg-background text-foreground hover:bg-background/90">
-                Começar Gratuitamente
-                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+              <Button variant="premium" size="xl" className="group bg-background text-foreground hover:bg-background/90" asChild>
+                <a href="/register">
+                  Começar Gratuitamente
+                  <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                </a>
               </Button>
-              <Button variant="outline" size="xl" className="border-background/20 text-background hover:bg-background/10">
-                Agendar Demonstração
+              <Button variant="outline" size="xl" className="border-background/20 text-background hover:bg-background/10" asChild>
+                <a href="/login">Agendar Demonstração</a>
               </Button>
             </div>
           </div>
