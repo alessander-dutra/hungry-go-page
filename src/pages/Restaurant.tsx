@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/hooks/useCart";
 import RestaurantHeader from "@/components/restaurant/RestaurantHeader";
@@ -6,6 +7,7 @@ import MenuSection from "@/components/restaurant/MenuSection";
 import Cart from "@/components/restaurant/Cart";
 
 const Restaurant = () => {
+  const navigate = useNavigate();
   const { cart, addItem, removeItem, updateQuantity, clearCart, getItemCount } = useCart();
   const { toast } = useToast();
 
@@ -143,20 +145,17 @@ const Restaurant = () => {
   };
 
   const handleCheckout = () => {
-    toast({
-      title: "Redirecionando para pagamento...",
-      description: "Você será direcionado para finalizar seu pedido.",
-    });
-    
-    // Here you would redirect to checkout page
-    // For now, just show a success message
-    setTimeout(() => {
+    if (cart.items.length === 0) {
       toast({
-        title: "Pedido realizado com sucesso! 🎉",
-        description: "Seu pedido foi confirmado e está sendo preparado.",
+        title: "Carrinho vazio",
+        description: "Adicione itens ao carrinho antes de finalizar o pedido.",
+        variant: "destructive"
       });
-      clearCart();
-    }, 2000);
+      return;
+    }
+
+    // Navigate to checkout with cart data
+    navigate("/checkout", { state: { cart } });
   };
 
   return (
