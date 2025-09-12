@@ -49,7 +49,7 @@ const Hero = () => {
                 </a>
               </Button>
               <Button variant="outline" size="xl" asChild>
-                <a href="/login">Ver Demonstração</a>
+                <a href="/restaurant">Ver Cardápio Demo</a>
               </Button>
             </div>
 
