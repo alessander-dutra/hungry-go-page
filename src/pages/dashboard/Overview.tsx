@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import StatsCard from "@/components/dashboard/StatsCard";
 import OrderCard from "@/components/dashboard/OrderCard";
+import AnalyticsChart from "@/components/dashboard/AnalyticsChart";
 import { 
   DollarSign, 
   ShoppingBag, 
@@ -12,7 +13,8 @@ import {
   Star,
   ArrowRight,
   MessageCircle,
-  Bot
+  Bot,
+  Calendar
 } from "lucide-react";
 
 const Overview = () => {
@@ -83,6 +85,33 @@ const Overview = () => {
     }
   ];
 
+  // Analytics data for charts
+  const salesData = [
+    { name: 'Seg', value: 1200 },
+    { name: 'Ter', value: 1900 },
+    { name: 'Qua', value: 1600 },
+    { name: 'Qui', value: 2100 },
+    { name: 'Sex', value: 2800 },
+    { name: 'Sáb', value: 3200 },
+    { name: 'Dom', value: 2400 }
+  ];
+
+  const ordersData = [
+    { name: 'Jan', value: 24 },
+    { name: 'Fev', value: 13 },
+    { name: 'Mar', value: 98 },
+    { name: 'Abr', value: 39 },
+    { name: 'Mai', value: 48 },
+    { name: 'Jun', value: 38 }
+  ];
+
+  const categoryData = [
+    { name: 'Pizzas', value: 45 },
+    { name: 'Hambúrguers', value: 30 },
+    { name: 'Massas', value: 15 },
+    { name: 'Bebidas', value: 10 }
+  ];
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -106,6 +135,88 @@ const Overview = () => {
         {stats.map((stat, index) => (
           <StatsCard key={index} {...stat} />
         ))}
+      </div>
+
+      {/* Analytics Charts */}
+      <div className="grid lg:grid-cols-2 gap-6 mb-6">
+        <AnalyticsChart
+          title="Vendas da Semana"
+          description="Vendas por dia nos últimos 7 dias"
+          type="bar"
+          data={salesData}
+        />
+        <AnalyticsChart
+          title="Tendência de Pedidos"
+          description="Evolução mensal de pedidos"
+          type="line"
+          data={ordersData}
+        />
+      </div>
+
+      <div className="grid lg:grid-cols-3 gap-6 mb-6">
+        <AnalyticsChart
+          title="Produtos Mais Vendidos"
+          description="Distribuição por categoria"
+          type="pie"
+          data={categoryData}
+          className="lg:col-span-1"
+        />
+        
+        {/* Quick Insights */}
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="h-5 w-5" />
+              Insights Rápidos
+            </CardTitle>
+            <CardDescription>
+              Análises automáticas da sua performance
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                <div className="flex items-center space-x-2 mb-2">
+                  <TrendingUp className="h-4 w-4 text-green-600" />
+                  <span className="text-sm font-medium text-green-800">Pico de Vendas</span>
+                </div>
+                <p className="text-sm text-green-700">
+                  Sexta-feira às 19h é seu melhor horário
+                </p>
+              </div>
+              
+              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="flex items-center space-x-2 mb-2">
+                  <Users className="h-4 w-4 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-800">Clientes Fiéis</span>
+                </div>
+                <p className="text-sm text-blue-700">
+                  78% dos clientes fazem pedidos recorrentes
+                </p>
+              </div>
+              
+              <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
+                <div className="flex items-center space-x-2 mb-2">
+                  <Clock className="h-4 w-4 text-orange-600" />
+                  <span className="text-sm font-medium text-orange-800">Tempo Médio</span>
+                </div>
+                <p className="text-sm text-orange-700">
+                  Reduza 5min no preparo para melhorar avaliações
+                </p>
+              </div>
+              
+              <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                <div className="flex items-center space-x-2 mb-2">
+                  <DollarSign className="h-4 w-4 text-purple-600" />
+                  <span className="text-sm font-medium text-purple-800">Receita Projetada</span>
+                </div>
+                <p className="text-sm text-purple-700">
+                  R$ 8.500 estimado para este mês
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Main Content Grid */}

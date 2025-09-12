@@ -5,6 +5,7 @@ import Overview from "./dashboard/Overview";
 import Menu from "./dashboard/Menu";
 import Orders from "./dashboard/Orders";
 import Settings from "./dashboard/Settings";
+import Analytics from "./dashboard/Analytics";
 
 const Dashboard = () => {
   return (
@@ -41,10 +42,10 @@ const Dashboard = () => {
               <Route path="/menu" element={<Menu />} />
               <Route path="/orders" element={<Orders />} />
               <Route path="/settings" element={<Settings />} />
-              <Route path="/analytics" element={<Overview />} />
+              <Route path="/analytics" element={<Analytics />} />
               <Route path="/whatsapp" element={<Overview />} />
-              <Route path="/customers" element={<Overview />} />
-              <Route path="/sales" element={<Overview />} />
+              <Route path="/customers" element={<Analytics />} />
+              <Route path="/sales" element={<Analytics />} />
             </Routes>
           </main>
         </div>
