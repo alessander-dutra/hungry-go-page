@@ -34,8 +34,10 @@ const Header = () => {
           </nav>
 
           {/* CTA Buttons */}
-          <div className="hidden md:flex items-center space-x-3">
-            <Button variant="ghost">Entrar</Button>
+          <div className="flex items-center space-x-3">
+            <Button variant="ghost" asChild>
+              <a href="/dashboard">Dashboard</a>
+            </Button>
             <Button variant="hero" size="lg">
               Começar Grátis
             </Button>
