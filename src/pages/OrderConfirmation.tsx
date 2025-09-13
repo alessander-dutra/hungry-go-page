@@ -122,6 +122,33 @@ Obrigado pela preferência!
     }
   };
 
+  const sendWhatsApp = () => {
+    try {
+      const id = orderData.orderId?.slice(-6);
+      const total = (isDelivery ? cart.total : cart.subtotal).toFixed(2);
+      const itemsText = cart.items
+        .map((item: any) => `${item.quantity}x ${item.name} - R$ ${(item.price * item.quantity).toFixed(2)}`)
+        .join('\n');
+      const deliveryText = isDelivery
+        ? `Entrega em: ${orderData.address?.street || ''}, ${orderData.address?.number || ''}${orderData.address?.complement ? ' - ' + orderData.address?.complement : ''} - ${orderData.address?.neighborhood || ''} - ${orderData.address?.city || ''}/${orderData.address?.state || ''}`
+        : 'Retirada no balcão';
+
+      const message = `Pedido #${id}\n${itemsText}\nTotal: R$ ${total}\n${deliveryText}`;
+      const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      toast({ title: 'WhatsApp', description: 'Abrindo WhatsApp…' });
+    } catch (error) {
+      toast({ title: 'Erro', description: 'Não foi possível abrir o WhatsApp.', variant: 'destructive' });
+    }
+  };
+
   const isDelivery = orderData.deliveryOption === 'delivery';
   const estimatedTime = isDelivery ? "30-45" : "20-30";
 
@@ -328,7 +355,7 @@ Obrigado pela preferência!
               Baixar Comprovante
             </Button>
             
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full" onClick={sendWhatsApp}>
               <MessageCircle className="h-4 w-4 mr-2" />
               WhatsApp
             </Button>
