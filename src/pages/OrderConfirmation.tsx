@@ -14,6 +14,7 @@ import {
   Share2,
   Download
 } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
 const OrderConfirmation = () => {
   const navigate = useNavigate();
@@ -88,6 +89,37 @@ Obrigado pela preferência!
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  const shareOrder = async () => {
+    const total = (isDelivery ? cart.total : cart.subtotal).toFixed(2);
+    const id = orderData.orderId?.slice(-6);
+    const text = `Pedido #${id} - Total: R$ ${total}`;
+    const url = window.location.href;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Pedido confirmado',
+          text: `${text}\n${isDelivery ? 'Entrega' : 'Retirada'} • Estimado: ${estimatedTime} min`,
+          url
+        });
+        toast({ title: "Compartilhado", description: "Pedido compartilhado com sucesso." });
+      } else if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(`${text}\n${url}`);
+        toast({ title: "Link copiado", description: "Comprovante copiado para a área de transferência." });
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = `${text}\n${url}`;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        toast({ title: "Link copiado", description: "Comprovante copiado para a área de transferência." });
+      }
+    } catch (err) {
+      toast({ title: "Falha ao compartilhar", description: "Não foi possível compartilhar agora.", variant: "destructive" });
+    }
   };
 
   const isDelivery = orderData.deliveryOption === 'delivery';
@@ -286,7 +318,7 @@ Obrigado pela preferência!
 
           {/* Actions */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full" onClick={shareOrder}>
               <Share2 className="h-4 w-4 mr-2" />
               Compartilhar
             </Button>
