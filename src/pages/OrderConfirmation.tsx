@@ -53,6 +53,43 @@ const OrderConfirmation = () => {
     return `${minutes} min`;
   };
 
+  const downloadReceipt = () => {
+    const receiptContent = `
+COMPROVANTE DE PEDIDO
+===================
+
+Pedido: #${orderData.orderId?.slice(-6)}
+Data: ${new Date().toLocaleDateString('pt-BR')}
+Hora: ${new Date().toLocaleTimeString('pt-BR')}
+
+${isDelivery ? 'ENTREGA' : 'RETIRADA'}
+Tempo estimado: ${estimatedTime} minutos
+
+ITENS:
+${cart.items.map((item: any) => 
+  `${item.quantity}x ${item.name} - R$ ${(item.price * item.quantity).toFixed(2)}`
+).join('\n')}
+
+RESUMO:
+Subtotal: R$ ${cart.subtotal.toFixed(2)}
+${isDelivery ? `Taxa de entrega: R$ ${cart.deliveryFee.toFixed(2)}\n` : ''}Total: R$ ${(isDelivery ? cart.total : cart.subtotal).toFixed(2)}
+
+${orderData.payment?.method === 'pix' ? 'PAGAMENTO: PIX - Confirmado' : ''}
+
+Obrigado pela preferência!
+    `.trim();
+
+    const blob = new Blob([receiptContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `comprovante-pedido-${orderData.orderId?.slice(-6)}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   const isDelivery = orderData.deliveryOption === 'delivery';
   const estimatedTime = isDelivery ? "30-45" : "20-30";
 
@@ -254,7 +291,7 @@ const OrderConfirmation = () => {
               Compartilhar
             </Button>
             
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full" onClick={downloadReceipt}>
               <Download className="h-4 w-4 mr-2" />
               Baixar Comprovante
             </Button>
