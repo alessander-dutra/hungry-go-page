@@ -28,6 +28,7 @@ const App = () => (
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/restaurant/:id" element={<Restaurant />} />
           <Route path="/restaurant" element={<Restaurant />} />
+          <Route path="/menu" element={<Restaurant />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order-confirmation" element={<OrderConfirmation />} />
           <Route path="/dashboard/*" element={<Dashboard />} />
