@@ -14,7 +14,7 @@ import {
   Share2,
   Download
 } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 
 const OrderConfirmation = () => {
   const navigate = useNavigate();
@@ -151,6 +151,26 @@ Obrigado pela preferência!
 
   const isDelivery = orderData.deliveryOption === 'delivery';
   const estimatedTime = isDelivery ? "30-45" : "20-30";
+
+  const contactSupport = () => {
+    try {
+      const id = orderData.orderId?.slice(-6);
+      const total = (isDelivery ? cart.total : cart.subtotal).toFixed(2);
+      const phone = '5511999999999';
+      const msg = `Olá, preciso de ajuda com o pedido #${id} (total R$ ${total}).`;
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+      const a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      toast({ title: 'Suporte', description: 'Abrindo WhatsApp do suporte…' });
+    } catch (err) {
+      toast({ title: 'Erro', description: 'Não foi possível abrir o WhatsApp.', variant: 'destructive' });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -377,7 +397,7 @@ Obrigado pela preferência!
               <p className="text-sm text-muted-foreground mb-2">
                 Precisa de ajuda com seu pedido?
               </p>
-              <Button variant="link" className="p-0">
+              <Button variant="link" className="p-0" onClick={contactSupport}>
                 Entre em contato conosco
               </Button>
             </CardContent>
