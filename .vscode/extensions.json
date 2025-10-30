@@ -1,0 +1,6 @@
+{
+    "recommendations": [
+        "supabase.vscode-supabase-extension",
+        "github.codespaces"
+    ]
+}

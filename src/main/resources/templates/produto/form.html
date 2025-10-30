@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Formulário de Produto</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.css">
+    <style>
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin: 10px;
+            position: relative;
+        }
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .image-actions {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            display: flex;
+            gap: 5px;
+        }
+        .dropzone {
+            border: 2px dashed #ccc;
+            border-radius: 4px;
+            padding: 20px;
+            text-align: center;
+            background: #f8f9fa;
+        }
+        .dropzone.dz-drag-hover {
+            border-color: #0d6efd;
+            background: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h2 th:text="${produto.id == null ? 'Novo Produto' : 'Editar Produto'}">Formulário de Produto</h2>
+
+        <form th:action="@{/produtos/salvar}" th:object="${produto}" method="post" enctype="multipart/form-data">
+            <input type="hidden" th:field="*{id}">
+            
+            <div class="mb-3">
+                <label for="nome" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="nome" th:field="*{nome}" required>
+                <div class="text-danger" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
+            </div>
+
+            <div class="mb-3">
+                <label for="descricao" class="form-label">Descrição</label>
+                <textarea class="form-control" id="descricao" th:field="*{descricao}" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="preco" class="form-label">Preço</label>
+                <input type="number" class="form-control" id="preco" th:field="*{preco}" step="0.01" required>
+                <div class="text-danger" th:if="${#fields.hasErrors('preco')}" th:errors="*{preco}"></div>
+            </div>
+
+            <!-- Container para imagens existentes -->
+            <div class="mb-3" id="imagens-existentes">
+                <label class="form-label">Imagens Atuais</label>
+                <div class="d-flex flex-wrap">
+                    <div th:each="imagem : ${produto.imagens}" class="image-preview">
+                        <img th:src="${imagem.getImagemCompleta()}" th:alt="${produto.nome}">
+                        <div class="image-actions">
+                            <button type="button" class="btn btn-sm btn-primary"
+                                    th:onclick="'definirImagemPrincipal(' + ${produto.id} + ',' + ${imagem.id} + ')'"
+                                    th:disabled="${imagem.principal}">
+                                Principal
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger"
+                                    th:onclick="'excluirImagem(' + ${produto.id} + ',' + ${imagem.id} + ')'"
+                                    th:unless="${imagem.principal && produto.imagens.size() > 1}">
+                                Excluir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dropzone para upload de novas imagens -->
+            <div class="mb-3">
+                <label class="form-label">Adicionar Novas Imagens</label>
+                <div id="dropzone-upload" class="dropzone">
+                    <div class="dz-message">
+                        Arraste imagens aqui ou clique para selecionar
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campo oculto para URLs de imagem -->
+            <div id="image-urls-container"></div>
+
+            <!-- Botões de ação -->
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Salvar</button>
+                <a th:href="@{/produtos}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>
+    <script th:inline="javascript">
+        Dropzone.autoDiscover = false;
+
+        new Dropzone("#dropzone-upload", {
+            url: "#",  // Será tratado pelo formulário principal
+            autoProcessQueue: false,
+            addRemoveLinks: true,
+            maxFilesize: 5, // MB
+            acceptedFiles: "image/*",
+            maxFiles: 5,
+            init: function() {
+                var dropzone = this;
+                var form = document.querySelector('form');
+
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Adiciona os arquivos ao FormData
+                    var formData = new FormData(form);
+                    dropzone.files.forEach(function(file, index) {
+                        formData.append('files', file);
+                    });
+
+                    // Envia o formulário
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: formData
+                    }).then(response => {
+                        if (response.ok) {
+                            window.location.href = '/produtos';
+                        } else {
+                            alert('Erro ao salvar produto');
+                        }
+                    });
+                });
+            }
+        });
+
+        function excluirImagem(produtoId, imagemId) {
+            if (!confirm('Tem certeza que deseja excluir esta imagem?')) return;
+
+            fetch(`/produtos/imagem/${produtoId}/${imagemId}`, {
+                method: 'DELETE'
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Erro ao excluir imagem');
+                }
+            });
+        }
+
+        function definirImagemPrincipal(produtoId, imagemId) {
+            fetch(`/produtos/imagem/${produtoId}/principal/${imagemId}`, {
+                method: 'POST'
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Erro ao definir imagem principal');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

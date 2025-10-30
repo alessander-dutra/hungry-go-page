@@ -34,7 +34,7 @@ const Restaurant = () => {
       description: "Molho de tomate caseiro, mussarela de búfala, manjericão fresco e azeite extravirgem",
       price: 45.90,
       category: "Pizzas",
-      image: "/pizza-margherita.jpg",
+      image: "/pizzaria-margarita,jpg",
       popular: true,
       available: true
     },
