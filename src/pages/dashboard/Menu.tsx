@@ -3,7 +3,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
 import { 
   Plus, 
   Search, 
@@ -16,11 +22,24 @@ import {
   EyeOff
 } from "lucide-react";
 
+interface MenuItem {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  image: string;
+  available: boolean;
+  popular: boolean;
+}
+
 const Menu = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
+  const [editFormData, setEditFormData] = useState<Partial<MenuItem>>({});
 
   // Mock menu data
-  const menuItems = [
+  const menuItems: MenuItem[] = [
     {
       id: "1",
       name: "Pizza Margherita",
@@ -86,6 +105,23 @@ const Menu = () => {
   const getCategoryCount = (category: string) => {
     if (category === "Todos") return menuItems.length;
     return menuItems.filter(item => item.category === category).length;
+  };
+
+  const handleEditClick = (item: MenuItem) => {
+    setEditingItem(item);
+    setEditFormData(item);
+  };
+
+  const handleSaveEdit = () => {
+    // Aqui você implementaria a lógica de salvar no backend
+    toast.success("Item atualizado com sucesso!");
+    setEditingItem(null);
+    setEditFormData({});
+  };
+
+  const handleCloseDialog = () => {
+    setEditingItem(null);
+    setEditFormData({});
   };
 
   return (
@@ -235,7 +271,12 @@ const Menu = () => {
                   </div>
                   
                   <div className="flex space-x-2">
-                    <Button variant="outline" size="sm" className="flex-1">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => handleEditClick(item)}
+                    >
                       <Edit3 className="h-4 w-4 mr-1" />
                       Editar
                     </Button>
@@ -265,6 +306,108 @@ const Menu = () => {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Edit Dialog */}
+      <Dialog open={!!editingItem} onOpenChange={(open) => !open && handleCloseDialog()}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Editar Item do Cardápio</DialogTitle>
+            <DialogDescription>
+              Faça as alterações necessárias no item do cardápio
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="name">Nome do Produto</Label>
+              <Input
+                id="name"
+                value={editFormData.name || ""}
+                onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="description">Descrição</Label>
+              <Textarea
+                id="description"
+                value={editFormData.description || ""}
+                onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                rows={3}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="price">Preço (R$)</Label>
+                <Input
+                  id="price"
+                  type="number"
+                  step="0.01"
+                  value={editFormData.price || ""}
+                  onChange={(e) => setEditFormData({ ...editFormData, price: parseFloat(e.target.value) })}
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="category">Categoria</Label>
+                <Select
+                  value={editFormData.category || ""}
+                  onValueChange={(value) => setEditFormData({ ...editFormData, category: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Pizzas">Pizzas</SelectItem>
+                    <SelectItem value="Hambúrguers">Hambúrguers</SelectItem>
+                    <SelectItem value="Saladas">Saladas</SelectItem>
+                    <SelectItem value="Massas">Massas</SelectItem>
+                    <SelectItem value="Bebidas">Bebidas</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="available">Disponível para venda</Label>
+                <p className="text-sm text-muted-foreground">
+                  O produto estará visível no cardápio
+                </p>
+              </div>
+              <Switch
+                id="available"
+                checked={editFormData.available || false}
+                onCheckedChange={(checked) => setEditFormData({ ...editFormData, available: checked })}
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="popular">Marcar como popular</Label>
+                <p className="text-sm text-muted-foreground">
+                  Destaque este item no cardápio
+                </p>
+              </div>
+              <Switch
+                id="popular"
+                checked={editFormData.popular || false}
+                onCheckedChange={(checked) => setEditFormData({ ...editFormData, popular: checked })}
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCloseDialog}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSaveEdit}>
+              Salvar Alterações
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
