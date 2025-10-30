@@ -34,7 +34,7 @@ const Restaurant = () => {
       description: "Molho de tomate caseiro, mussarela de búfala, manjericão fresco e azeite extravirgem",
       price: 45.90,
       category: "Pizzas",
-      image: "/placeholder.svg",
+      image: "https://cdn.casaeculinaria.com/wp-content/uploads/2023/11/21140713/Pizza-marguerita.webp",
       popular: true,
       available: true
     },
