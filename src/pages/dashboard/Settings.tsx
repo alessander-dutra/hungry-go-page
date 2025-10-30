@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -6,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "@/hooks/use-toast";
 import { 
   Store, 
   MapPin, 
@@ -18,10 +20,150 @@ import {
   Smartphone,
   Bot,
   Save,
-  Upload
+  Upload,
+  Loader2
 } from "lucide-react";
 
+interface RestaurantInfo {
+  name: string;
+  phone: string;
+  email: string;
+  category: string;
+  description: string;
+  address: string;
+}
+
+interface DeliveryConfig {
+  fee: string;
+  minOrder: string;
+  deliveryTime: string;
+  deliveryRadius: string;
+  pickupEnabled: boolean;
+  freeDeliveryEnabled: boolean;
+  freeDeliveryMin: string;
+}
+
+interface PaymentMethod {
+  name: string;
+  description: string;
+  active: boolean;
+}
+
+interface NotificationPref {
+  name: string;
+  description: string;
+  active: boolean;
+}
+
 const Settings = () => {
+  const [saving, setSaving] = useState(false);
+  
+  // Restaurant Info State
+  const [restaurantInfo, setRestaurantInfo] = useState<RestaurantInfo>({
+    name: "Restaurante Demo",
+    phone: "(11) 99999-9999",
+    email: "contato@restaurante.com",
+    category: "Pizzaria",
+    description: "A melhor pizzaria da região com ingredientes selecionados e massa artesanal.",
+    address: "Rua das Flores, 123 - Vila Madalena, São Paulo - SP, 05433-000"
+  });
+
+  // Delivery Config State
+  const [deliveryConfig, setDeliveryConfig] = useState<DeliveryConfig>({
+    fee: "5.90",
+    minOrder: "25.00",
+    deliveryTime: "45",
+    deliveryRadius: "5.0",
+    pickupEnabled: true,
+    freeDeliveryEnabled: true,
+    freeDeliveryMin: "50.00"
+  });
+
+  // Schedule State
+  const [schedule, setSchedule] = useState([
+    { day: "Segunda-feira", open: "11:00", close: "23:00", active: true },
+    { day: "Terça-feira", open: "11:00", close: "23:00", active: true },
+    { day: "Quarta-feira", open: "11:00", close: "23:00", active: true },
+    { day: "Quinta-feira", open: "11:00", close: "23:00", active: true },
+    { day: "Sexta-feira", open: "11:00", close: "00:00", active: true },
+    { day: "Sábado", open: "11:00", close: "00:00", active: true },
+    { day: "Domingo", open: "11:00", close: "22:00", active: false },
+  ]);
+
+  // Payment Methods State
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
+    { name: "PIX", description: "Pagamento instantâneo", active: true },
+    { name: "Cartão de Crédito", description: "Visa, Mastercard, Elo", active: true },
+    { name: "Cartão de Débito", description: "Débito online", active: true },
+    { name: "Dinheiro", description: "Pagamento na entrega", active: false },
+  ]);
+
+  // Notifications State
+  const [notifications, setNotifications] = useState<NotificationPref[]>([
+    { name: "Novos Pedidos", description: "Receber notificação quando há novos pedidos", active: true },
+    { name: "Pedidos Cancelados", description: "Notificar quando pedidos são cancelados", active: true },
+    { name: "Avaliações", description: "Notificar sobre novas avaliações de clientes", active: true },
+    { name: "Relatórios Diários", description: "Resumo diário por email", active: false },
+    { name: "Promoções", description: "Sugestões de promoções da IA", active: true },
+  ]);
+
+  // AI Features State
+  const [aiFeatures, setAiFeatures] = useState({
+    recommendations: true,
+    priceOptimization: true,
+    predictiveAnalytics: true
+  });
+
+  const [whatsappMessage, setWhatsappMessage] = useState(
+    "Olá! 👋 Bem-vindo ao nosso restaurante! Como posso ajudá-lo hoje?"
+  );
+
+  const handleSaveSettings = async () => {
+    setSaving(true);
+    
+    try {
+      // Simulando salvamento no backend
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      toast({
+        title: "✅ Configurações salvas!",
+        description: "Todas as alterações foram aplicadas com sucesso.",
+      });
+    } catch (error) {
+      toast({
+        title: "❌ Erro ao salvar",
+        description: "Não foi possível salvar as configurações. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleLogoUpload = () => {
+    toast({
+      title: "Upload de logo",
+      description: "Funcionalidade de upload será implementada em breve.",
+    });
+  };
+
+  const updateSchedule = (index: number, field: string, value: any) => {
+    const newSchedule = [...schedule];
+    newSchedule[index] = { ...newSchedule[index], [field]: value };
+    setSchedule(newSchedule);
+  };
+
+  const togglePaymentMethod = (index: number) => {
+    const newMethods = [...paymentMethods];
+    newMethods[index].active = !newMethods[index].active;
+    setPaymentMethods(newMethods);
+  };
+
+  const toggleNotification = (index: number) => {
+    const newNotifications = [...notifications];
+    newNotifications[index].active = !newNotifications[index].active;
+    setNotifications(newNotifications);
+  };
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -33,9 +175,13 @@ const Settings = () => {
           </p>
         </div>
         
-        <Button variant="hero">
-          <Save className="h-4 w-4 mr-2" />
-          Salvar Alterações
+        <Button variant="hero" onClick={handleSaveSettings} disabled={saving}>
+          {saving ? (
+            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+          ) : (
+            <Save className="h-4 w-4 mr-2" />
+          )}
+          {saving ? "Salvando..." : "Salvar Alterações"}
         </Button>
       </div>
 
@@ -64,22 +210,39 @@ const Settings = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="restaurant-name">Nome do Restaurante</Label>
-                  <Input id="restaurant-name" defaultValue="Restaurante Demo" />
+                  <Input 
+                    id="restaurant-name" 
+                    value={restaurantInfo.name}
+                    onChange={(e) => setRestaurantInfo({...restaurantInfo, name: e.target.value})}
+                  />
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="restaurant-phone">Telefone</Label>
-                  <Input id="restaurant-phone" defaultValue="(11) 99999-9999" />
+                  <Input 
+                    id="restaurant-phone" 
+                    value={restaurantInfo.phone}
+                    onChange={(e) => setRestaurantInfo({...restaurantInfo, phone: e.target.value})}
+                  />
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="restaurant-email">E-mail</Label>
-                  <Input id="restaurant-email" type="email" defaultValue="contato@restaurante.com" />
+                  <Input 
+                    id="restaurant-email" 
+                    type="email" 
+                    value={restaurantInfo.email}
+                    onChange={(e) => setRestaurantInfo({...restaurantInfo, email: e.target.value})}
+                  />
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="restaurant-category">Categoria</Label>
-                  <Input id="restaurant-category" defaultValue="Pizzaria" />
+                  <Input 
+                    id="restaurant-category" 
+                    value={restaurantInfo.category}
+                    onChange={(e) => setRestaurantInfo({...restaurantInfo, category: e.target.value})}
+                  />
                 </div>
               </div>
               
@@ -87,7 +250,8 @@ const Settings = () => {
                 <Label htmlFor="restaurant-description">Descrição</Label>
                 <Textarea 
                   id="restaurant-description" 
-                  defaultValue="A melhor pizzaria da região com ingredientes selecionados e massa artesanal."
+                  value={restaurantInfo.description}
+                  onChange={(e) => setRestaurantInfo({...restaurantInfo, description: e.target.value})}
                   rows={3}
                 />
               </div>
@@ -96,7 +260,8 @@ const Settings = () => {
                 <Label htmlFor="restaurant-address">Endereço Completo</Label>
                 <Textarea 
                   id="restaurant-address" 
-                  defaultValue="Rua das Flores, 123 - Vila Madalena, São Paulo - SP, 05433-000"
+                  value={restaurantInfo.address}
+                  onChange={(e) => setRestaurantInfo({...restaurantInfo, address: e.target.value})}
                   rows={2}
                 />
               </div>
@@ -107,7 +272,7 @@ const Settings = () => {
                   <div className="w-16 h-16 rounded-lg gradient-hero flex items-center justify-center">
                     <span className="text-white font-bold text-2xl">R</span>
                   </div>
-                  <Button variant="outline">
+                  <Button variant="outline" onClick={handleLogoUpload}>
                     <Upload className="h-4 w-4 mr-2" />
                     Alterar Logo
                   </Button>
@@ -128,24 +293,29 @@ const Settings = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {[
-                  { day: "Segunda-feira", open: "11:00", close: "23:00", active: true },
-                  { day: "Terça-feira", open: "11:00", close: "23:00", active: true },
-                  { day: "Quarta-feira", open: "11:00", close: "23:00", active: true },
-                  { day: "Quinta-feira", open: "11:00", close: "23:00", active: true },
-                  { day: "Sexta-feira", open: "11:00", close: "00:00", active: true },
-                  { day: "Sábado", open: "11:00", close: "00:00", active: true },
-                  { day: "Domingo", open: "11:00", close: "22:00", active: false },
-                ].map((schedule, index) => (
+                {schedule.map((item, index) => (
                   <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                     <div className="flex items-center space-x-3">
-                      <Switch defaultChecked={schedule.active} />
-                      <Label className="font-medium">{schedule.day}</Label>
+                      <Switch 
+                        checked={item.active}
+                        onCheckedChange={(checked) => updateSchedule(index, 'active', checked)}
+                      />
+                      <Label className="font-medium">{item.day}</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Input type="time" defaultValue={schedule.open} className="w-24" />
+                      <Input 
+                        type="time" 
+                        value={item.open} 
+                        onChange={(e) => updateSchedule(index, 'open', e.target.value)}
+                        className="w-24" 
+                      />
                       <span className="text-muted-foreground">às</span>
-                      <Input type="time" defaultValue={schedule.close} className="w-24" />
+                      <Input 
+                        type="time" 
+                        value={item.close} 
+                        onChange={(e) => updateSchedule(index, 'close', e.target.value)}
+                        className="w-24" 
+                      />
                     </div>
                   </div>
                 ))}
@@ -170,22 +340,45 @@ const Settings = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="delivery-fee">Taxa de Entrega (R$)</Label>
-                  <Input id="delivery-fee" type="number" step="0.01" defaultValue="5.90" />
+                  <Input 
+                    id="delivery-fee" 
+                    type="number" 
+                    step="0.01" 
+                    value={deliveryConfig.fee}
+                    onChange={(e) => setDeliveryConfig({...deliveryConfig, fee: e.target.value})}
+                  />
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="min-order">Pedido Mínimo (R$)</Label>
-                  <Input id="min-order" type="number" step="0.01" defaultValue="25.00" />
+                  <Input 
+                    id="min-order" 
+                    type="number" 
+                    step="0.01" 
+                    value={deliveryConfig.minOrder}
+                    onChange={(e) => setDeliveryConfig({...deliveryConfig, minOrder: e.target.value})}
+                  />
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="delivery-time">Tempo de Entrega (min)</Label>
-                  <Input id="delivery-time" type="number" defaultValue="45" />
+                  <Input 
+                    id="delivery-time" 
+                    type="number" 
+                    value={deliveryConfig.deliveryTime}
+                    onChange={(e) => setDeliveryConfig({...deliveryConfig, deliveryTime: e.target.value})}
+                  />
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="delivery-radius">Raio de Entrega (km)</Label>
-                  <Input id="delivery-radius" type="number" step="0.1" defaultValue="5.0" />
+                  <Input 
+                    id="delivery-radius" 
+                    type="number" 
+                    step="0.1" 
+                    value={deliveryConfig.deliveryRadius}
+                    onChange={(e) => setDeliveryConfig({...deliveryConfig, deliveryRadius: e.target.value})}
+                  />
                 </div>
               </div>
               
@@ -197,7 +390,10 @@ const Settings = () => {
                       Permitir que clientes retirem pedidos no restaurante
                     </p>
                   </div>
-                  <Switch defaultChecked />
+                  <Switch 
+                    checked={deliveryConfig.pickupEnabled}
+                    onCheckedChange={(checked) => setDeliveryConfig({...deliveryConfig, pickupEnabled: checked})}
+                  />
                 </div>
                 
                 <div className="flex items-center justify-between">
@@ -207,13 +403,22 @@ const Settings = () => {
                       Oferecer entrega grátis para pedidos acima de um valor
                     </p>
                   </div>
-                  <Switch defaultChecked />
+                  <Switch 
+                    checked={deliveryConfig.freeDeliveryEnabled}
+                    onCheckedChange={(checked) => setDeliveryConfig({...deliveryConfig, freeDeliveryEnabled: checked})}
+                  />
                 </div>
               </div>
               
               <div className="space-y-2">
                 <Label htmlFor="free-delivery-min">Valor para Entrega Grátis (R$)</Label>
-                <Input id="free-delivery-min" type="number" step="0.01" defaultValue="50.00" />
+                <Input 
+                  id="free-delivery-min" 
+                  type="number" 
+                  step="0.01" 
+                  value={deliveryConfig.freeDeliveryMin}
+                  onChange={(e) => setDeliveryConfig({...deliveryConfig, freeDeliveryMin: e.target.value})}
+                />
               </div>
             </CardContent>
           </Card>
@@ -232,18 +437,16 @@ const Settings = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {[
-                { name: "PIX", description: "Pagamento instantâneo", active: true },
-                { name: "Cartão de Crédito", description: "Visa, Mastercard, Elo", active: true },
-                { name: "Cartão de Débito", description: "Débito online", active: true },
-                { name: "Dinheiro", description: "Pagamento na entrega", active: false },
-              ].map((payment, index) => (
+              {paymentMethods.map((payment, index) => (
                 <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="space-y-0.5">
                     <Label className="font-medium">{payment.name}</Label>
                     <p className="text-sm text-muted-foreground">{payment.description}</p>
                   </div>
-                  <Switch defaultChecked={payment.active} />
+                  <Switch 
+                    checked={payment.active}
+                    onCheckedChange={() => togglePaymentMethod(index)}
+                  />
                 </div>
               ))}
             </CardContent>
@@ -284,19 +487,16 @@ const Settings = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {[
-                { name: "Novos Pedidos", description: "Receber notificação quando há novos pedidos", active: true },
-                { name: "Pedidos Cancelados", description: "Notificar quando pedidos são cancelados", active: true },
-                { name: "Avaliações", description: "Notificar sobre novas avaliações de clientes", active: true },
-                { name: "Relatórios Diários", description: "Resumo diário por email", active: false },
-                { name: "Promoções", description: "Sugestões de promoções da IA", active: true },
-              ].map((notification, index) => (
+              {notifications.map((notification, index) => (
                 <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="space-y-0.5">
                     <Label className="font-medium">{notification.name}</Label>
                     <p className="text-sm text-muted-foreground">{notification.description}</p>
                   </div>
-                  <Switch defaultChecked={notification.active} />
+                  <Switch 
+                    checked={notification.active}
+                    onCheckedChange={() => toggleNotification(index)}
+                  />
                 </div>
               ))}
             </CardContent>
@@ -333,7 +533,8 @@ const Settings = () => {
                 <Label htmlFor="whatsapp-message">Mensagem de Boas-vindas</Label>
                 <Textarea 
                   id="whatsapp-message"
-                  defaultValue="Olá! 👋 Bem-vindo ao nosso restaurante! Como posso ajudá-lo hoje?"
+                  value={whatsappMessage}
+                  onChange={(e) => setWhatsappMessage(e.target.value)}
                   rows={3}
                 />
               </div>
@@ -372,7 +573,10 @@ const Settings = () => {
                       IA sugere produtos baseado no histórico do cliente
                     </p>
                   </div>
-                  <Switch defaultChecked />
+                  <Switch 
+                    checked={aiFeatures.recommendations}
+                    onCheckedChange={(checked) => setAiFeatures({...aiFeatures, recommendations: checked})}
+                  />
                 </div>
                 
                 <div className="flex items-center justify-between">
@@ -382,7 +586,10 @@ const Settings = () => {
                       Ajustar preços automaticamente para maximizar vendas
                     </p>
                   </div>
-                  <Switch defaultChecked />
+                  <Switch 
+                    checked={aiFeatures.priceOptimization}
+                    onCheckedChange={(checked) => setAiFeatures({...aiFeatures, priceOptimization: checked})}
+                  />
                 </div>
                 
                 <div className="flex items-center justify-between">
@@ -392,7 +599,10 @@ const Settings = () => {
                       Previsões de demanda e insights inteligentes
                     </p>
                   </div>
-                  <Switch defaultChecked />
+                  <Switch 
+                    checked={aiFeatures.predictiveAnalytics}
+                    onCheckedChange={(checked) => setAiFeatures({...aiFeatures, predictiveAnalytics: checked})}
+                  />
                 </div>
               </div>
             </CardContent>
