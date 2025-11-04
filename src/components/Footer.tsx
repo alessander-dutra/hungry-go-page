@@ -27,7 +27,7 @@ const Footer = () => {
                   <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                 </a>
               </Button>
-              <Button variant="outline" size="xl" className="border-background/20 text-background hover:bg-background/10" asChild>
+              <Button variant="premium" size="xl" className="group bg-background text-foreground hover:bg-background/90" asChild>
                 <a href="/login">Agendar Demonstração</a>
               </Button>
             </div>
@@ -101,13 +101,12 @@ const Footer = () => {
             
             <div className="mt-6">
               <h4 className="font-medium mb-3">Suporte 24/7</h4>
-              <Button variant="outline" size="sm" className="border-background/20 text-background hover:bg-background/10">
+              <Button variant="premium" size="sm" className="group bg-background text-foreground hover:bg-background/90">
                 Abrir Chat
               </Button>
             </div>
           </div>
         </div>
-
         {/* Bottom Bar */}
         <div className="border-t border-background/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-sm text-background/50">
