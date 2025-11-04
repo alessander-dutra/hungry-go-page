@@ -16,10 +16,12 @@ import {
   Filter, 
   Edit3, 
   Trash2, 
-  Image,
+  Image as ImageIcon,
+  Upload,
   DollarSign,
   Eye,
-  EyeOff
+  EyeOff,
+  X
 } from "lucide-react";
 
 interface MenuItem {
@@ -37,6 +39,9 @@ const Menu = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
   const [editFormData, setEditFormData] = useState<Partial<MenuItem>>({});
+  const [imageUrl, setImageUrl] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState("");
 
   // Mock menu data
   const menuItems: MenuItem[] = [
@@ -110,18 +115,54 @@ const Menu = () => {
   const handleEditClick = (item: MenuItem) => {
     setEditingItem(item);
     setEditFormData(item);
+    setImageUrl(item.image || "");
+    setImagePreview(item.image || "");
+    setImageFile(null);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+      setImageUrl(""); // Limpa URL se arquivo foi selecionado
+    }
+  };
+
+  const handleUrlChange = (url: string) => {
+    setImageUrl(url);
+    if (url) {
+      setImagePreview(url);
+      setImageFile(null); // Limpa arquivo se URL foi inserida
+    }
+  };
+
+  const clearImage = () => {
+    setImageUrl("");
+    setImageFile(null);
+    setImagePreview("");
   };
 
   const handleSaveEdit = () => {
     // Aqui você implementaria a lógica de salvar no backend
+    // Se imageFile existe, fazer upload do arquivo
+    // Se imageUrl existe, usar a URL
+    const finalImage = imageFile ? imagePreview : imageUrl;
+    
     toast.success("Item atualizado com sucesso!");
     setEditingItem(null);
     setEditFormData({});
+    clearImage();
   };
 
   const handleCloseDialog = () => {
     setEditingItem(null);
     setEditFormData({});
+    clearImage();
   };
 
   return (
@@ -237,7 +278,7 @@ const Menu = () => {
               <Card key={item.id} className="card-hover">
                 <CardHeader className="pb-3">
                   <div className="aspect-video bg-muted rounded-lg flex items-center justify-center mb-4">
-                    <Image className="h-12 w-12 text-muted-foreground" />
+                    <ImageIcon className="h-12 w-12 text-muted-foreground" />
                   </div>
                   
                   <div className="flex items-start justify-between">
@@ -366,6 +407,68 @@ const Menu = () => {
                     <SelectItem value="Bebidas">Bebidas</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+            </div>
+
+            {/* Imagem do Produto */}
+            <div className="grid gap-2">
+              <Label>Imagem do Produto</Label>
+              
+              {imagePreview && (
+                <div className="relative w-full aspect-video bg-muted rounded-lg overflow-hidden">
+                  <img 
+                    src={imagePreview} 
+                    alt="Preview" 
+                    className="w-full h-full object-cover"
+                  />
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-2 right-2 h-8 w-8"
+                    onClick={clearImage}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+
+              <div className="grid gap-3">
+                <div className="grid gap-2">
+                  <Label htmlFor="imageUrl" className="text-sm">URL da Imagem</Label>
+                  <Input
+                    id="imageUrl"
+                    placeholder="https://exemplo.com/imagem.jpg"
+                    value={imageUrl}
+                    onChange={(e) => handleUrlChange(e.target.value)}
+                  />
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 border-t" />
+                  <span className="text-xs text-muted-foreground">OU</span>
+                  <div className="flex-1 border-t" />
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="imageFile" className="text-sm">Upload de Arquivo</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="imageFile"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="flex-1"
+                    />
+                    <Button variant="outline" size="icon" asChild>
+                      <label htmlFor="imageFile" className="cursor-pointer">
+                        <Upload className="h-4 w-4" />
+                      </label>
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Formatos aceitos: JPG, PNG, GIF (máx. 5MB)
+                  </p>
+                </div>
               </div>
             </div>
 

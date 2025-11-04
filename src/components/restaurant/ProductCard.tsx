@@ -3,7 +3,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Minus, ShoppingCart } from "lucide-react";
-import { heroImage } from "@/assets/pizza-margarita.jpg";
 
 interface ProductCardProps {
   id: string;
