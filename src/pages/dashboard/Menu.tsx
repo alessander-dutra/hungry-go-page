@@ -153,6 +153,14 @@ const Menu = () => {
     // Se imageUrl existe, usar a URL
     const finalImage = imageFile ? imagePreview : imageUrl;
     
+    // Atualiza o item com a nova imagem
+    const updatedData = {
+      ...editFormData,
+      image: finalImage
+    };
+    
+    console.log("Dados salvos:", updatedData);
+    
     toast.success("Item atualizado com sucesso!");
     setEditingItem(null);
     setEditFormData({});
