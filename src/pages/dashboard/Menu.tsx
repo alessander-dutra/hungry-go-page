@@ -150,25 +150,23 @@ const Menu = () => {
   const handleSaveEdit = () => {
     if (!editingItem) return;
     
-    // Se imageFile existe, fazer upload do arquivo
-    // Se imageUrl existe, usar a URL
-    const finalImage = imageFile ? imagePreview : imageUrl;
-    
-    // Atualiza o item com a nova imagem
-    const updatedData = {
+    // Se imageFile existe, fazer upload do arquivo; se URL existe, usar a URL; caso contrário manter a atual
+    const finalImage = imageFile ? imagePreview : (imageUrl || editingItem.image);
+
+    // Mescla dados existentes do item com o formulário e a imagem final, preservando o id
+    const updatedData: MenuItem = {
+      ...editingItem,
       ...editFormData,
-      image: finalImage
-    } as MenuItem;
-    
-    // Atualiza o array de menuItems
-    setMenuItems(prevItems => 
-      prevItems.map(item => 
-        item.id === editingItem.id ? updatedData : item
-      )
+      image: finalImage || editingItem.image,
+    };
+
+    // Atualiza o array de items
+    setMenuItems((prevItems) =>
+      prevItems.map((item) => (item.id === editingItem.id ? updatedData : item))
     );
-    
+
     console.log("Dados salvos:", updatedData);
-    
+
     toast.success("Item atualizado com sucesso!");
     setEditingItem(null);
     setEditFormData({});
@@ -293,8 +291,22 @@ const Menu = () => {
             {filteredItems.map((item) => (
               <Card key={item.id} className="card-hover">
                 <CardHeader className="pb-3">
-                  <div className="aspect-video bg-muted rounded-lg flex items-center justify-center mb-4">
-                    <ImageIcon className="h-12 w-12 text-muted-foreground" />
+                  <div className="aspect-video bg-muted rounded-lg overflow-hidden mb-4">
+                    {item.image ? (
+                      <img
+                        src={item.image}
+                        alt={`Imagem do produto ${item.name}`}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).src = "/placeholder.svg";
+                        }}
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center">
+                        <ImageIcon className="h-12 w-12 text-muted-foreground" />
+                      </div>
+                    )}
                   </div>
                   
                   <div className="flex items-start justify-between">
@@ -322,6 +334,7 @@ const Menu = () => {
                     <Badge 
                       variant={item.available ? "default" : "secondary"}
                       className={item.available ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
+                      aria-label={item.available ? "Produto disponível" : "Produto indisponível"}
                     >
                       {item.available ? "Disponível" : "Indisponível"}
                     </Badge>
