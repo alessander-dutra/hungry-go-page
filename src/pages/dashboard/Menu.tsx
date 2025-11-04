@@ -44,7 +44,7 @@ const Menu = () => {
   const [imagePreview, setImagePreview] = useState("");
 
   // Mock menu data
-  const menuItems: MenuItem[] = [
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([
     {
       id: "1",
       name: "Pizza Margherita",
@@ -95,7 +95,7 @@ const Menu = () => {
       available: true,
       popular: false
     }
-  ];
+  ]);
 
   const categories = ["Todos", "Pizzas", "Hambúrguers", "Saladas", "Massas", "Bebidas"];
 
@@ -148,7 +148,8 @@ const Menu = () => {
   };
 
   const handleSaveEdit = () => {
-    // Aqui você implementaria a lógica de salvar no backend
+    if (!editingItem) return;
+    
     // Se imageFile existe, fazer upload do arquivo
     // Se imageUrl existe, usar a URL
     const finalImage = imageFile ? imagePreview : imageUrl;
@@ -157,7 +158,14 @@ const Menu = () => {
     const updatedData = {
       ...editFormData,
       image: finalImage
-    };
+    } as MenuItem;
+    
+    // Atualiza o array de menuItems
+    setMenuItems(prevItems => 
+      prevItems.map(item => 
+        item.id === editingItem.id ? updatedData : item
+      )
+    );
     
     console.log("Dados salvos:", updatedData);
     
