@@ -358,7 +358,7 @@ const Menu = () => {
 
       {/* Edit Dialog */}
       <Dialog open={!!editingItem} onOpenChange={(open) => !open && handleCloseDialog()}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Editar Item do Cardápio</DialogTitle>
             <DialogDescription>
@@ -386,7 +386,7 @@ const Menu = () => {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="price">Preço (R$)</Label>
                 <Input
@@ -480,7 +480,7 @@ const Menu = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
               <div className="space-y-0.5">
                 <Label htmlFor="available">Disponível para venda</Label>
                 <p className="text-sm text-muted-foreground">
@@ -494,7 +494,7 @@ const Menu = () => {
               />
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
               <div className="space-y-0.5">
                 <Label htmlFor="popular">Marcar como popular</Label>
                 <p className="text-sm text-muted-foreground">
@@ -509,11 +509,11 @@ const Menu = () => {
             </div>
           </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={handleCloseDialog}>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={handleCloseDialog} className="w-full sm:w-auto">
               Cancelar
             </Button>
-            <Button onClick={handleSaveEdit}>
+            <Button onClick={handleSaveEdit} className="w-full sm:w-auto">
               Salvar Alterações
             </Button>
           </DialogFooter>
