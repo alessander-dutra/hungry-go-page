@@ -393,7 +393,7 @@ const Menu = () => {
               <Input
                 id="name"
                 value={editFormData.name || ""}
-                onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                onChange={(e) => setEditFormData(prev => ({ ...prev, name: e.target.value }))}
               />
             </div>
 
@@ -402,7 +402,7 @@ const Menu = () => {
               <Textarea
                 id="description"
                 value={editFormData.description || ""}
-                onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                onChange={(e) => setEditFormData(prev => ({ ...prev, description: e.target.value }))}
                 rows={3}
               />
             </div>
@@ -415,7 +415,7 @@ const Menu = () => {
                   type="number"
                   step="0.01"
                   value={editFormData.price || ""}
-                  onChange={(e) => setEditFormData({ ...editFormData, price: parseFloat(e.target.value) })}
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, price: parseFloat(e.target.value) }))}
                 />
               </div>
 
@@ -423,7 +423,7 @@ const Menu = () => {
                 <Label htmlFor="category">Categoria</Label>
                 <Select
                   value={editFormData.category || ""}
-                  onValueChange={(value) => setEditFormData({ ...editFormData, category: value })}
+                  onValueChange={(value) => setEditFormData(prev => ({ ...prev, category: value }))}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione" />
@@ -511,7 +511,7 @@ const Menu = () => {
               <Switch
                 id="available"
                 checked={editFormData.available || false}
-                onCheckedChange={(checked) => setEditFormData({ ...editFormData, available: checked })}
+                onCheckedChange={(checked) => setEditFormData(prev => ({ ...prev, available: checked }))}
               />
             </div>
 
@@ -525,7 +525,7 @@ const Menu = () => {
               <Switch
                 id="popular"
                 checked={editFormData.popular || false}
-                onCheckedChange={(checked) => setEditFormData({ ...editFormData, popular: checked })}
+                onCheckedChange={(checked) => setEditFormData(prev => ({ ...prev, popular: checked }))}
               />
             </div>
           </div>
