@@ -185,7 +185,8 @@ const Menu = () => {
       }
     } catch (error) {
       console.error('Erro ao gerar imagem:', error);
-      toast.error(error instanceof Error ? error.message : "Erro ao gerar imagem com IA");
+      const errorMessage = error instanceof Error ? error.message : "Erro ao gerar imagem com IA";
+      toast.error(errorMessage);
     } finally {
       setIsGeneratingImage(false);
     }

@@ -72,12 +72,28 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    console.log('Resposta completa da API:', JSON.stringify(data));
+    
+    // Tenta diferentes formatos de resposta
+    let imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    
+    // Se não encontrou no primeiro formato, tenta alternativas
+    if (!imageUrl && data.choices?.[0]?.message?.content) {
+      console.log('Tentando formato alternativo de resposta');
+      const content = data.choices[0].message.content;
+      // Às vezes a imagem vem no content como base64
+      if (typeof content === 'string' && content.includes('data:image')) {
+        imageUrl = content;
+      }
+    }
     
     if (!imageUrl) {
-      console.error('Imagem não retornada pela API');
+      console.error('Imagem não retornada pela API. Estrutura da resposta:', JSON.stringify(data, null, 2));
       return new Response(
-        JSON.stringify({ error: 'Nenhuma imagem foi gerada' }),
+        JSON.stringify({ 
+          error: 'Não foi possível gerar a imagem. Tente novamente em alguns segundos.',
+          details: 'A API não retornou uma imagem no formato esperado'
+        }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
