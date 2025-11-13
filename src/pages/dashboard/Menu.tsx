@@ -510,7 +510,31 @@ const Menu = () => {
                 </Button>
               </div>
               
-              {imagePreview && (
+              {/* Loading Preview */}
+              {isGeneratingImage && !imagePreview && (
+                <div className="relative w-full aspect-video bg-muted rounded-lg overflow-hidden">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-6">
+                    <div className="relative">
+                      <Sparkles className="h-12 w-12 text-primary animate-pulse" />
+                      <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
+                    </div>
+                    <div className="text-center space-y-2">
+                      <p className="text-sm font-medium">Gerando imagem com IA...</p>
+                      <p className="text-xs text-muted-foreground">Isso pode levar alguns segundos</p>
+                    </div>
+                    <div className="w-full max-w-xs">
+                      <div className="h-1 w-full bg-muted-foreground/20 rounded-full overflow-hidden">
+                        <div className="h-full bg-primary animate-[loading_2s_ease-in-out_infinite]" style={{
+                          animation: 'loading 2s ease-in-out infinite',
+                        }} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Image Preview */}
+              {imagePreview && !isGeneratingImage && (
                 <div className="relative w-full aspect-video bg-muted rounded-lg overflow-hidden">
                   <img 
                     src={imagePreview} 

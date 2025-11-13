@@ -4,6 +4,17 @@
 
 /* Design System for DeliveryPro - Modern Delivery Platform */
 
+@keyframes loading {
+  0%, 100% {
+    width: 0%;
+    margin-left: 0;
+  }
+  50% {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
