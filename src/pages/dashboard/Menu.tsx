@@ -21,7 +21,9 @@ import {
   DollarSign,
   Eye,
   EyeOff,
-  X
+  X,
+  Sparkles,
+  Loader2
 } from "lucide-react";
 
 interface MenuItem {
@@ -42,6 +44,7 @@ const Menu = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState("");
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
   // Mock menu data
   const [menuItems, setMenuItems] = useState<MenuItem[]>([
@@ -145,6 +148,47 @@ const Menu = () => {
     setImageUrl("");
     setImageFile(null);
     setImagePreview("");
+  };
+
+  const handleGenerateImage = async () => {
+    if (!editFormData.description) {
+      toast.error("Adicione uma descrição do produto para gerar a imagem");
+      return;
+    }
+
+    setIsGeneratingImage(true);
+    
+    try {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-menu-image`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: editFormData.name || '',
+          description: editFormData.description
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Erro ao gerar imagem');
+      }
+
+      const data = await response.json();
+      
+      if (data.imageUrl) {
+        setImagePreview(data.imageUrl);
+        setImageUrl(data.imageUrl);
+        setImageFile(null);
+        toast.success("Imagem gerada com sucesso!");
+      }
+    } catch (error) {
+      console.error('Erro ao gerar imagem:', error);
+      toast.error(error instanceof Error ? error.message : "Erro ao gerar imagem com IA");
+    } finally {
+      setIsGeneratingImage(false);
+    }
   };
 
   const handleSaveEdit = () => {
@@ -441,7 +485,29 @@ const Menu = () => {
 
             {/* Imagem do Produto */}
             <div className="grid gap-2">
-              <Label>Imagem do Produto</Label>
+              <div className="flex items-center justify-between">
+                <Label>Imagem do Produto</Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleGenerateImage}
+                  disabled={isGeneratingImage || !editFormData.description}
+                  className="gap-2"
+                >
+                  {isGeneratingImage ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Gerando...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4" />
+                      Gerar com IA
+                    </>
+                  )}
+                </Button>
+              </div>
               
               {imagePreview && (
                 <div className="relative w-full aspect-video bg-muted rounded-lg overflow-hidden">
