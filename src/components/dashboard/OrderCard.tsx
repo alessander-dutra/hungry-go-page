@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Clock, MapPin, Phone, CheckCircle, XCircle } from "lucide-react";
 import { useState, useRef } from "react";
 import { toast } from "@/hooks/use-toast";
+import { useFeedbackSound } from "@/hooks/useFeedbackSound";
 
 interface OrderItem {
   name: string;
@@ -40,6 +41,7 @@ const OrderCard = ({
   const [isAnimating, setIsAnimating] = useState(false);
   const startX = useRef(0);
   const cardRef = useRef<HTMLDivElement>(null);
+  const { playSuccessSound, playErrorSound } = useFeedbackSound();
   
   const handleTouchStart = (e: React.TouchEvent) => {
     if (status !== "pending") return;
@@ -64,6 +66,7 @@ const OrderCard = ({
       // Aceitar pedido (swipe direita)
       setIsAnimating(true);
       setShowConfirmation("accept");
+      playSuccessSound();
       
       setTimeout(() => {
         toast({
@@ -78,6 +81,7 @@ const OrderCard = ({
       // Recusar pedido (swipe esquerda)
       setIsAnimating(true);
       setShowConfirmation("reject");
+      playErrorSound();
       
       setTimeout(() => {
         toast({
