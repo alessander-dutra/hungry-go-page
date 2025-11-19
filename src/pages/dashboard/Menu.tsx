@@ -25,6 +25,11 @@ import {
   Sparkles,
   Loader2
 } from "lucide-react";
+import pizzaMargherita from "@/assets/pizza-margherita.jpg";
+import hamburguerArtesanal from "@/assets/hamburguer-artesanal.jpg";
+import saladaCaesar from "@/assets/salada-caesar.jpg";
+import pastaCarbonara from "@/assets/pasta-carbonara.jpg";
+import cocaCola from "@/assets/coca-cola.jpg";
 
 interface MenuItem {
   id: string;
@@ -54,7 +59,7 @@ const Menu = () => {
       description: "Molho de tomate, mussarela, manjericão fresco e azeite",
       price: 45.90,
       category: "Pizzas",
-      image: "/placeholder.svg",
+      image: pizzaMargherita,
       available: true,
       popular: true
     },
@@ -64,7 +69,7 @@ const Menu = () => {
       description: "Blend 180g, queijo cheddar, alface, tomate, cebola roxa",
       price: 32.90,
       category: "Hambúrguers",
-      image: "/placeholder.svg",
+      image: hamburguerArtesanal,
       available: true,
       popular: false
     },
@@ -74,7 +79,7 @@ const Menu = () => {
       description: "Alface romana, croutons, parmesão, molho caesar",
       price: 28.90,
       category: "Saladas",
-      image: "/placeholder.svg",
+      image: saladaCaesar,
       available: false,
       popular: false
     },
@@ -84,7 +89,7 @@ const Menu = () => {
       description: "Espaguete, bacon, ovos, parmesão, pimenta preta",
       price: 38.90,
       category: "Massas",
-      image: "/placeholder.svg",
+      image: pastaCarbonara,
       available: true,
       popular: true
     },
@@ -94,7 +99,7 @@ const Menu = () => {
       description: "Refrigerante de cola gelado",
       price: 8.50,
       category: "Bebidas",
-      image: "/placeholder.svg",
+      image: cocaCola,
       available: true,
       popular: false
     }
