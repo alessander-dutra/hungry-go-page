@@ -5,6 +5,16 @@ import { useCart } from "@/hooks/useCart";
 import RestaurantHeader from "@/components/restaurant/RestaurantHeader";
 import MenuSection from "@/components/restaurant/MenuSection";
 import Cart from "@/components/restaurant/Cart";
+import pizzaMargherita from "@/assets/pizza-margherita.jpg";
+import pizzaPepperoni from "@/assets/pizza-pepperoni.jpg";
+import pizzaPortuguesa from "@/assets/pizza-portuguesa.jpg";
+import hamburguerArtesanal from "@/assets/hamburguer-artesanal.jpg";
+import cheeseburgerDuplo from "@/assets/cheeseburger-duplo.jpg";
+import batataFrita from "@/assets/batata-frita.jpg";
+import onionRings from "@/assets/onion-rings.jpg";
+import cocaCola from "@/assets/coca-cola.jpg";
+import sucoLaranja from "@/assets/suco-laranja.jpg";
+import brownieSorvete from "@/assets/brownie-sorvete.jpg";
 
 const Restaurant = () => {
   const navigate = useNavigate();
@@ -34,7 +44,7 @@ const Restaurant = () => {
       description: "Molho de tomate caseiro, mussarela de búfala, manjericão fresco e azeite extravirgem",
       price: 45.90,
       category: "Pizzas",
-      image: "/pizzaria-margarita,jpg",
+      image: pizzaMargherita,
       popular: true,
       available: true
     },
@@ -44,7 +54,7 @@ const Restaurant = () => {
       description: "Molho de tomate, mussarela, pepperoni italiano e orégano",
       price: 52.90,
       category: "Pizzas",
-      image: "/placeholder.svg",
+      image: pizzaPepperoni,
       popular: true,
       available: true
     },
@@ -54,7 +64,7 @@ const Restaurant = () => {
       description: "Molho de tomate, mussarela, presunto, ovo, cebola, azeitona e orégano",
       price: 48.90,
       category: "Pizzas",
-      image: "/placeholder.svg",
+      image: pizzaPortuguesa,
       popular: false,
       available: true
     },
@@ -64,7 +74,7 @@ const Restaurant = () => {
       description: "Blend 180g, queijo cheddar, alface, tomate, cebola roxa e molho especial",
       price: 32.90,
       category: "Hambúrguers",
-      image: "/placeholder.svg",
+      image: hamburguerArtesanal,
       popular: true,
       available: true
     },
@@ -74,7 +84,7 @@ const Restaurant = () => {
       description: "Dois blends 150g, queijo cheddar duplo, picles, cebola e molho burger",
       price: 42.90,
       category: "Hambúrguers", 
-      image: "/placeholder.svg",
+      image: cheeseburgerDuplo,
       popular: false,
       available: true
     },
@@ -84,7 +94,7 @@ const Restaurant = () => {
       description: "Batatas cortadas na hora, temperadas com sal e ervas especiais",
       price: 18.90,
       category: "Acompanhamentos",
-      image: "/placeholder.svg",
+      image: batataFrita,
       popular: false,
       available: true
     },
@@ -94,7 +104,7 @@ const Restaurant = () => {
       description: "Anéis de cebola empanados e fritos, acompanha molho barbecue",
       price: 16.90,
       category: "Acompanhamentos",
-      image: "/placeholder.svg",
+      image: onionRings,
       popular: false,
       available: true
     },
@@ -104,7 +114,7 @@ const Restaurant = () => {
       description: "Refrigerante de cola gelado, perfeito para acompanhar sua refeição",
       price: 8.50,
       category: "Bebidas",
-      image: "/placeholder.svg",
+      image: cocaCola,
       popular: false,
       available: true
     },
@@ -114,7 +124,7 @@ const Restaurant = () => {
       description: "Suco de laranja 100% natural, sem conservantes ou açúcar adicionado",
       price: 7.90,
       category: "Bebidas",
-      image: "/placeholder.svg",
+      image: sucoLaranja,
       popular: false,
       available: true
     },
@@ -124,7 +134,7 @@ const Restaurant = () => {
       description: "Brownie de chocolate quente com uma bola de sorvete de baunilha",
       price: 15.90,
       category: "Sobremesas",
-      image: "/placeholder.svg",
+      image: brownieSorvete,
       popular: true,
       available: false
     }
