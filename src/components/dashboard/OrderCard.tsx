@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Clock, MapPin, Phone, CheckCircle, XCircle } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 
 interface OrderItem {
   name: string;
@@ -32,6 +33,60 @@ const OrderCard = ({
   createdAt,
   estimatedTime 
 }: OrderCardProps) => {
+  const [swipeX, setSwipeX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const startX = useRef(0);
+  const cardRef = useRef<HTMLDivElement>(null);
+  
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (status !== "pending") return;
+    startX.current = e.touches[0].clientX;
+    setIsDragging(true);
+  };
+  
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || status !== "pending") return;
+    const currentX = e.touches[0].clientX;
+    const diff = currentX - startX.current;
+    setSwipeX(diff);
+  };
+  
+  const handleTouchEnd = () => {
+    if (!isDragging || status !== "pending") return;
+    setIsDragging(false);
+    
+    const threshold = 120;
+    
+    if (swipeX > threshold) {
+      // Aceitar pedido (swipe direita)
+      console.log("Pedido aceito:", id);
+      // Aqui você pode chamar a função de aceitar
+    } else if (swipeX < -threshold) {
+      // Recusar pedido (swipe esquerda)
+      console.log("Pedido recusado:", id);
+      // Aqui você pode chamar a função de recusar
+    }
+    
+    setSwipeX(0);
+  };
+  
+  const getSwipeBackground = () => {
+    if (swipeX > 50) {
+      return "bg-green-500/20";
+    } else if (swipeX < -50) {
+      return "bg-red-500/20";
+    }
+    return "";
+  };
+  
+  const getSwipeIcon = () => {
+    if (swipeX > 50) {
+      return <CheckCircle className="h-8 w-8 text-green-500" />;
+    } else if (swipeX < -50) {
+      return <XCircle className="h-8 w-8 text-red-500" />;
+    }
+    return null;
+  };
   const getStatusBadge = () => {
     const statusConfig = {
       pending: { label: "Pendente", variant: "secondary" as const, color: "bg-yellow-100 text-yellow-800" },
@@ -89,8 +144,43 @@ const OrderCard = ({
   };
 
   return (
-    <Card className="card-hover">
-      <CardHeader>
+    <div className="relative overflow-hidden">
+      {/* Swipe background indicators */}
+      {status === "pending" && (
+        <>
+          <div 
+            className={`absolute inset-0 flex items-center justify-start pl-8 transition-opacity ${
+              swipeX > 50 ? "opacity-100" : "opacity-0"
+            }`}
+            style={{ pointerEvents: "none" }}
+          >
+            <CheckCircle className="h-12 w-12 text-green-500" />
+          </div>
+          <div 
+            className={`absolute inset-0 flex items-center justify-end pr-8 transition-opacity ${
+              swipeX < -50 ? "opacity-100" : "opacity-0"
+            }`}
+            style={{ pointerEvents: "none" }}
+          >
+            <XCircle className="h-12 w-12 text-red-500" />
+          </div>
+        </>
+      )}
+      
+      {/* Card with swipe transform */}
+      <Card 
+        ref={cardRef}
+        className={`card-hover ${getSwipeBackground()} transition-colors`}
+        style={{
+          transform: `translateX(${swipeX}px)`,
+          transition: isDragging ? "none" : "transform 0.3s ease-out",
+          touchAction: status === "pending" ? "pan-y" : "auto"
+        }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">Pedido #{id.slice(-6)}</CardTitle>
           {getStatusBadge()}
@@ -144,8 +234,16 @@ const OrderCard = ({
 
         {/* Actions */}
         {getStatusActions()}
+        
+        {/* Swipe hint for mobile */}
+        {status === "pending" && (
+          <div className="text-xs text-muted-foreground text-center mt-2 md:hidden">
+            👈 Deslize para recusar | Deslize para aceitar 👉
+          </div>
+        )}
       </CardContent>
-    </Card>
+      </Card>
+    </div>
   );
 };
 
