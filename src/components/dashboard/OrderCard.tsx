@@ -2,7 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Clock, MapPin, Phone, CheckCircle, XCircle } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
+import { toast } from "@/hooks/use-toast";
 
 interface OrderItem {
   name: string;
@@ -35,6 +36,8 @@ const OrderCard = ({
 }: OrderCardProps) => {
   const [swipeX, setSwipeX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState<"accept" | "reject" | null>(null);
+  const [isAnimating, setIsAnimating] = useState(false);
   const startX = useRef(0);
   const cardRef = useRef<HTMLDivElement>(null);
   
@@ -59,12 +62,32 @@ const OrderCard = ({
     
     if (swipeX > threshold) {
       // Aceitar pedido (swipe direita)
-      console.log("Pedido aceito:", id);
-      // Aqui você pode chamar a função de aceitar
+      setIsAnimating(true);
+      setShowConfirmation("accept");
+      
+      setTimeout(() => {
+        toast({
+          title: "✅ Pedido Aceito!",
+          description: `Pedido #${id.slice(-6)} foi aceito com sucesso.`,
+        });
+        setShowConfirmation(null);
+        setIsAnimating(false);
+      }, 1000);
+      
     } else if (swipeX < -threshold) {
       // Recusar pedido (swipe esquerda)
-      console.log("Pedido recusado:", id);
-      // Aqui você pode chamar a função de recusar
+      setIsAnimating(true);
+      setShowConfirmation("reject");
+      
+      setTimeout(() => {
+        toast({
+          title: "❌ Pedido Recusado",
+          description: `Pedido #${id.slice(-6)} foi recusado.`,
+          variant: "destructive",
+        });
+        setShowConfirmation(null);
+        setIsAnimating(false);
+      }, 1000);
     }
     
     setSwipeX(0);
@@ -145,8 +168,35 @@ const OrderCard = ({
 
   return (
     <div className="relative overflow-hidden">
+      {/* Confirmation Animation Overlay */}
+      {showConfirmation && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+          {showConfirmation === "accept" ? (
+            <div className="flex flex-col items-center gap-4">
+              <div 
+                className="rounded-full bg-green-500 p-6"
+                style={{ animation: "success-pop 0.6s ease-out" }}
+              >
+                <CheckCircle className="h-16 w-16 text-white" strokeWidth={3} />
+              </div>
+              <p className="text-lg font-semibold text-green-600">Pedido Aceito!</p>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-4">
+              <div 
+                className="rounded-full bg-red-500 p-6"
+                style={{ animation: "reject-shake 0.6s ease-out" }}
+              >
+                <XCircle className="h-16 w-16 text-white" strokeWidth={3} />
+              </div>
+              <p className="text-lg font-semibold text-red-600">Pedido Recusado</p>
+            </div>
+          )}
+        </div>
+      )}
+      
       {/* Swipe background indicators */}
-      {status === "pending" && (
+      {status === "pending" && !showConfirmation && (
         <>
           <div 
             className={`absolute inset-0 flex items-center justify-start pl-8 transition-opacity ${
@@ -174,7 +224,8 @@ const OrderCard = ({
         style={{
           transform: `translateX(${swipeX}px)`,
           transition: isDragging ? "none" : "transform 0.3s ease-out",
-          touchAction: status === "pending" ? "pan-y" : "auto"
+          touchAction: status === "pending" ? "pan-y" : "auto",
+          pointerEvents: isAnimating ? "none" : "auto"
         }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
