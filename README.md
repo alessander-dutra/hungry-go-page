@@ -1,73 +1,78 @@
-# Welcome to your Lovable project
+# HungryGo - Plataforma de Delivery Inteligente
 
-## Project info
+[![Lovable](https://img.shields.io/badge/Built%20with-Lovable-6366f1?logo=lovable&logoColor=white)](https://lovable.dev)
+[![Node.js](https://img.shields.io/badge/Node.js-v18+-339933?logo=node.js&logoColor=white)](https://nodejs.org)
+[![React](https://img.shields.io/badge/React-18+-61DAFB?logo=react&logoColor=black)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5+-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-5+-646CFF?logo=vite&logoColor=white)](https://vitejs.dev)
+[![License MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-**URL**: https://lovable.dev/projects/4cdcbbba-fc1f-427e-961e-6fd5a2a84069
+## 💼 Sobre o Projeto
 
-## How can I edit this code?
+Plataforma web moderna de delivery e gerenciamento de pedidos desenvolvida com **Lovable**, otimizada para performance e escalabilidade. Sistema completo para restaurantes gerenciarem seus pedidos, cardápio e operações.
 
-There are several ways of editing your application.
+---
 
-**Use Lovable**
+## 🖥️ Stack Tecnológico
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/4cdcbbba-fc1f-427e-961e-6fd5a2a84069) and start prompting.
+### Frontend
+- **React 18** - Biblioteca UI moderna com hooks e suspense
+- **TypeScript** - Type-safe development
+- **Vite** - Build tool ultrarrápido
+- **Tailwind CSS** - Utility-first CSS framework
 
-Changes made via Lovable will be committed automatically to this repo.
+### Backend & Infraestrutura
+- **Node.js** - Runtime JavaScript
+- **npm** - Gerenciador de dependências
+- **Git** - Versionamento de código
 
-**Use your preferred IDE**
+### Ferramentas de Desenvolvimento
+- **Lovable** - IDE AI-powered para desenvolvimento visual
+- **GitHub** - Repositório e CI/CD
+- **VS Code** - Editor recomendado
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+---
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 🚀 Como Usar Este Código?
 
-Follow these steps:
+Existem várias formas de editar sua aplicação:
+
+### **Opção 1: Use Lovable**
+
+Simplemente visite o [Lovable Project](https://lovable.dev/projects/4cdcbbba-fc1f-427e-961e-6fd5a2a84069) e comece a usar prompts.
+
+**Mudanças feitas via Lovable serão committed automaticamente neste repo.**
+
+### **Opção 2: Use sua IDE Preferida**
+
+Se deseja trabalhar localmente com sua própria IDE, clone este repo e faça push de mudanças.
+
+**Único requisito:** ter Node.js & npm instalado - [instale com nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+
+Siga estes passos:
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
+# Passo 1: Clone o repositório usando a URL Git do projeto.
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
+# Passo 2: Navegue até o diretório do projeto.
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
+# Passo 3: Instale as dependências necessárias.
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Passo 4: Inicie o servidor de desenvolvimento com reloading automático.
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### **Opção 3: Edite um arquivo diretamente no GitHub**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- Navegue até o arquivo desejado(s).
+- Clique no botão "Edit" (peníl) no topo direito.
+- Faça suas mudanças e commit delas.
 
-**Use GitHub Codespaces**
+### **Opção 4: Use GitHub Codespaces**
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/4cdcbbba-fc1f-427e-961e-6fd5a2a84069) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- Navegue para a página principal do repositório.
+- Clique no botão "Code" (verde) perto do topo direito.
+- Selecione a aba "Codespaces".
