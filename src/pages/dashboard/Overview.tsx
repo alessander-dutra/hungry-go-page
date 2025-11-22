@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import StatsCard from "@/components/dashboard/StatsCard";
 import OrderCard from "@/components/dashboard/OrderCard";
 import AnalyticsChart from "@/components/dashboard/AnalyticsChart";
+import { useNavigate } from "react-router-dom";
 import { 
   DollarSign, 
   ShoppingBag, 
@@ -18,6 +19,8 @@ import {
 } from "lucide-react";
 
 const Overview = () => {
+  const navigate = useNavigate();
+  
   // Mock data
   const stats = [
     {
@@ -315,7 +318,12 @@ const Overview = () => {
                   <span className="text-muted-foreground">Pedidos via WhatsApp</span>
                   <span className="font-semibold">18</span>
                 </div>
-                <Button variant="outline" size="sm" className="w-full">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full"
+                  onClick={() => navigate('/dashboard/whatsapp')}
+                >
                   <Bot className="h-4 w-4 mr-2" />
                   Configurar Bot
                 </Button>
@@ -332,15 +340,27 @@ const Overview = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button variant="outline" className="w-full justify-start">
+              <Button 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={() => navigate('/dashboard/settings')}
+              >
                 <TrendingUp className="h-4 w-4 mr-2" />
                 Criar Promoção
               </Button>
-              <Button variant="outline" className="w-full justify-start">
+              <Button 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={() => navigate('/dashboard/analytics')}
+              >
                 <Users className="h-4 w-4 mr-2" />
                 Ver Feedback Clientes
               </Button>
-              <Button variant="outline" className="w-full justify-start">
+              <Button 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={() => navigate('/dashboard/menu')}
+              >
                 <MessageCircle className="h-4 w-4 mr-2" />
                 Configurar Cardápio
               </Button>
