@@ -278,6 +278,25 @@ const Settings = () => {
                   </Button>
                 </div>
               </div>
+
+              <div className="border rounded-lg p-4">
+                <h4 className="font-medium mb-3">Banner Promocional</h4>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Tamanho ideal: <strong>1920x512 pixels</strong> (proporção aproximadamente 4:1)
+                </p>
+                <div className="space-y-3">
+                  <div className="w-full h-32 rounded-lg bg-muted border-2 border-dashed border-border flex items-center justify-center">
+                    <div className="text-center">
+                      <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                      <p className="text-sm text-muted-foreground">Nenhum banner carregado</p>
+                    </div>
+                  </div>
+                  <Button variant="outline" onClick={handleLogoUpload} className="w-full">
+                    <Upload className="h-4 w-4 mr-2" />
+                    Enviar Banner (1920x512px)
+                  </Button>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
