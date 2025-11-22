@@ -41,21 +41,10 @@ const RestaurantHeader = ({
 }: RestaurantHeaderProps) => {
   return (
     <div className="relative">
-      {/* Promotional Banner */}
-      {banner && (
-        <div className="h-32 lg:h-48 relative overflow-hidden">
-          <img 
-            src={banner} 
-            alt="Banner promocional"
-            className="w-full h-full object-cover"
-          />
-        </div>
-      )}
-
       {/* Hero Image */}
-      <div className="h-64 lg:h-80 relative overflow-hidden">
+      <div className="h-64 lg:h-96 relative overflow-hidden">
         <img 
-          src={image} 
+          src={banner || image} 
           alt={name}
           className="w-full h-full object-cover"
         />
