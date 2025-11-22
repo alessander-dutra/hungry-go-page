@@ -15,6 +15,7 @@ import onionRings from "@/assets/onion-rings.jpg";
 import cocaCola from "@/assets/coca-cola.jpg";
 import sucoLaranja from "@/assets/suco-laranja.jpg";
 import brownieSorvete from "@/assets/brownie-sorvete.jpg";
+import heroBanner from "@/assets/hero-banner.jpg";
 
 const Restaurant = () => {
   const navigate = useNavigate();
@@ -33,6 +34,7 @@ const Restaurant = () => {
     address: "Rua das Flores, 123 - Vila Madalena, São Paulo - SP",
     phone: "(11) 99999-9999",
     image: "/placeholder.svg",
+    banner: heroBanner,
     isOpen: true
   };
 
