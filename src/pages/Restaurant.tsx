@@ -33,7 +33,7 @@ const Restaurant = () => {
     minOrder: 25.00,
     address: "Rua das Flores, 123 - Vila Madalena, São Paulo - SP",
     phone: "(11) 99999-9999",
-    image: "/placeholder.svg",
+    image: heroBanner,
     banner: heroBanner,
     isOpen: true
   };
