@@ -1,9 +1,19 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import OrderCard from "@/components/dashboard/OrderCard";
+import { Input } from "@/components/ui/input";
+import KanbanColumn from "@/components/dashboard/KanbanColumn";
+import KanbanCard from "@/components/dashboard/KanbanCard";
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverEvent,
+  DragOverlay,
+  DragStartEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import { 
   Filter, 
   Search, 
@@ -13,18 +23,27 @@ import {
   CheckCircle,
   AlertCircle
 } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 const Orders = () => {
   const [refreshing, setRefreshing] = useState(false);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
 
   const handleRefresh = () => {
     setRefreshing(true);
     setTimeout(() => setRefreshing(false), 1000);
   };
 
-  // Mock orders data
-  const orders = [
+  // Mock orders data with status management
+  const [orders, setOrders] = useState([
     {
       id: "ORD001234",
       customerName: "João Silva",
@@ -81,16 +100,98 @@ const Orders = () => {
       createdAt: "12:30",
       estimatedTime: "Entregue"
     }
-  ];
+  ]);
 
   const getOrdersByStatus = (status: string) => {
-    if (status === "all") return orders;
     return orders.filter(order => order.status === status);
   };
 
   const getStatusCount = (status: string) => {
     return getOrdersByStatus(status).length;
   };
+
+  const handleAcceptOrder = (orderId: string) => {
+    setOrders(prevOrders =>
+      prevOrders.map(order =>
+        order.id === orderId
+          ? { ...order, status: "preparing" as const }
+          : order
+      )
+    );
+  };
+
+  const handleCancelOrder = (orderId: string) => {
+    setOrders(prevOrders => prevOrders.filter(order => order.id !== orderId));
+  };
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
+
+  const handleDragOver = (event: DragOverEvent) => {
+    const { active, over } = event;
+    if (!over) return;
+
+    const activeId = active.id as string;
+    const overId = over.id as string;
+
+    // Find the order being dragged
+    const activeOrder = orders.find(order => order.id === activeId);
+    if (!activeOrder) return;
+
+    // Determine the target status based on the column
+    let newStatus: "pending" | "preparing" | "ready" | "delivered" | null = null;
+    
+    if (overId === "pending" || orders.find(o => o.id === overId)?.status === "pending") {
+      newStatus = "pending";
+    } else if (overId === "preparing" || orders.find(o => o.id === overId)?.status === "preparing") {
+      newStatus = "preparing";
+    } else if (overId === "ready" || orders.find(o => o.id === overId)?.status === "ready") {
+      newStatus = "ready";
+    } else if (overId === "delivered" || orders.find(o => o.id === overId)?.status === "delivered") {
+      newStatus = "delivered";
+    }
+
+    if (newStatus && activeOrder.status !== newStatus) {
+      setOrders(prevOrders =>
+        prevOrders.map(order =>
+          order.id === activeId
+            ? { ...order, status: newStatus }
+            : order
+        )
+      );
+    }
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    setActiveId(null);
+    const { active, over } = event;
+    if (!over) return;
+
+    const activeId = active.id as string;
+    const overId = over.id as string;
+
+    const activeOrder = orders.find(order => order.id === activeId);
+    if (!activeOrder) return;
+
+    let newStatus: "pending" | "preparing" | "ready" | "delivered" | null = null;
+    
+    if (overId === "pending" || orders.find(o => o.id === overId)?.status === "pending") {
+      newStatus = "pending";
+    } else if (overId === "preparing" || orders.find(o => o.id === overId)?.status === "preparing") {
+      newStatus = "preparing";
+    } else if (overId === "ready" || orders.find(o => o.id === overId)?.status === "ready") {
+      newStatus = "ready";
+    } else if (overId === "delivered" || orders.find(o => o.id === overId)?.status === "delivered") {
+      newStatus = "delivered";
+    }
+
+    if (newStatus && activeOrder.status !== newStatus) {
+      toast.success(`Pedido movido para ${newStatus === "preparing" ? "Preparando" : newStatus === "ready" ? "Pronto" : newStatus === "delivered" ? "Entregue" : "Pendente"}`);
+    }
+  };
+
+  const activeOrder = activeId ? orders.find(order => order.id === activeId) : null;
 
   return (
     <div className="space-y-6">
@@ -187,81 +288,79 @@ const Orders = () => {
         </CardContent>
       </Card>
 
-      {/* Orders Tabs */}
-      <Tabs defaultValue="all" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="all">
-            Todos ({orders.length})
-          </TabsTrigger>
-          <TabsTrigger value="pending">
-            Pendentes ({getStatusCount("pending")})
-          </TabsTrigger>
-          <TabsTrigger value="preparing">
-            Preparando ({getStatusCount("preparing")})
-          </TabsTrigger>
-          <TabsTrigger value="ready">
-            Prontos ({getStatusCount("ready")})
-          </TabsTrigger>
-          <TabsTrigger value="delivered">
-            Entregues ({getStatusCount("delivered")})
-          </TabsTrigger>
-          <TabsTrigger value="cancelled">
-            Cancelados (0)
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="all" className="space-y-4">
-          <div className="grid gap-4">
-            {orders.map((order) => (
-              <OrderCard key={order.id} {...order} />
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="pending" className="space-y-4">
-          <div className="grid gap-4">
+      {/* Kanban Board */}
+      <DndContext
+        sensors={sensors}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 h-[calc(100vh-400px)]">
+          <KanbanColumn
+            id="pending"
+            title="Pendentes"
+            count={getStatusCount("pending")}
+            color="bg-yellow-100 text-yellow-800"
+            itemIds={getOrdersByStatus("pending").map(o => o.id)}
+          >
             {getOrdersByStatus("pending").map((order) => (
-              <OrderCard key={order.id} {...order} />
+              <KanbanCard
+                key={order.id}
+                {...order}
+                onAccept={handleAcceptOrder}
+                onCancel={handleCancelOrder}
+              />
             ))}
-          </div>
-        </TabsContent>
+          </KanbanColumn>
 
-        <TabsContent value="preparing" className="space-y-4">
-          <div className="grid gap-4">
+          <KanbanColumn
+            id="preparing"
+            title="Preparando"
+            count={getStatusCount("preparing")}
+            color="bg-orange-100 text-orange-800"
+            itemIds={getOrdersByStatus("preparing").map(o => o.id)}
+          >
             {getOrdersByStatus("preparing").map((order) => (
-              <OrderCard key={order.id} {...order} />
+              <KanbanCard key={order.id} {...order} />
             ))}
-          </div>
-        </TabsContent>
+          </KanbanColumn>
 
-        <TabsContent value="ready" className="space-y-4">
-          <div className="grid gap-4">
+          <KanbanColumn
+            id="ready"
+            title="Prontos"
+            count={getStatusCount("ready")}
+            color="bg-green-100 text-green-800"
+            itemIds={getOrdersByStatus("ready").map(o => o.id)}
+          >
             {getOrdersByStatus("ready").map((order) => (
-              <OrderCard key={order.id} {...order} />
+              <KanbanCard key={order.id} {...order} />
             ))}
-          </div>
-        </TabsContent>
+          </KanbanColumn>
 
-        <TabsContent value="delivered" className="space-y-4">
-          <div className="grid gap-4">
+          <KanbanColumn
+            id="delivered"
+            title="Entregues"
+            count={getStatusCount("delivered")}
+            color="bg-blue-100 text-blue-800"
+            itemIds={getOrdersByStatus("delivered").map(o => o.id)}
+          >
             {getOrdersByStatus("delivered").map((order) => (
-              <OrderCard key={order.id} {...order} />
+              <KanbanCard key={order.id} {...order} />
             ))}
-          </div>
-        </TabsContent>
+          </KanbanColumn>
+        </div>
 
-        <TabsContent value="cancelled" className="space-y-4">
-          <Card>
-            <CardContent className="p-8 text-center">
-              <CheckCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Nenhum pedido cancelado</h3>
-              <p className="text-muted-foreground">
-                Ótimo! Você não tem pedidos cancelados hoje.
-              </p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+        <DragOverlay>
+          {activeOrder ? (
+            <Card className="opacity-90 rotate-3 cursor-grabbing">
+              <CardContent className="p-4">
+                <h4 className="font-semibold">Pedido #{activeOrder.id}</h4>
+                <p className="text-sm text-muted-foreground">{activeOrder.customerName}</p>
+              </CardContent>
+            </Card>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
     </div>
   );
 };
