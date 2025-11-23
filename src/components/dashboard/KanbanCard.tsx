@@ -19,7 +19,7 @@ interface KanbanCardProps {
   address: string;
   items: OrderItem[];
   total: number;
-  status: "pending" | "preparing" | "ready" | "delivered";
+  status: "pending" | "preparing" | "ready" | "delivered" | "scheduled" | "cancelled";
   createdAt: string;
   estimatedTime: string;
   onAccept?: (id: string) => void;
@@ -64,6 +64,10 @@ const KanbanCard = ({
         return "bg-green-500";
       case "delivered":
         return "bg-blue-500";
+      case "scheduled":
+        return "bg-purple-500";
+      case "cancelled":
+        return "bg-red-500";
       default:
         return "bg-gray-500";
     }
@@ -79,6 +83,10 @@ const KanbanCard = ({
         return "Pronto";
       case "delivered":
         return "Entregue";
+      case "scheduled":
+        return "Agendado";
+      case "cancelled":
+        return "Cancelado";
       default:
         return status;
     }
