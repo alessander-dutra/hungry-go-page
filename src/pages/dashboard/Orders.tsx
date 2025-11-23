@@ -99,6 +99,33 @@ const Orders = () => {
       status: "delivered" as const,
       createdAt: "12:30",
       estimatedTime: "Entregue"
+    },
+    {
+      id: "ORD001238",
+      customerName: "Carlos Mendes",
+      customerPhone: "(11) 55555-5555",
+      address: "Rua dos Três Irmãos, 555 - Pinheiros, São Paulo - SP",
+      items: [
+        { name: "Pizza Portuguesa G", quantity: 1, price: 52.90 },
+        { name: "Guaraná 2L", quantity: 1, price: 8.00 }
+      ],
+      total: 60.90,
+      status: "scheduled" as const,
+      createdAt: "10:30",
+      estimatedTime: "18:00"
+    },
+    {
+      id: "ORD001239",
+      customerName: "Beatriz Lima",
+      customerPhone: "(11) 44444-4444",
+      address: "Av. Faria Lima, 888 - Itaim Bibi, São Paulo - SP",
+      items: [
+        { name: "Cheeseburger Duplo", quantity: 1, price: 35.90 }
+      ],
+      total: 35.90,
+      status: "cancelled" as const,
+      createdAt: "13:00",
+      estimatedTime: "Cancelado"
     }
   ]);
 
@@ -140,7 +167,7 @@ const Orders = () => {
     if (!activeOrder) return;
 
     // Determine the target status based on the column
-    let newStatus: "pending" | "preparing" | "ready" | "delivered" | null = null;
+    let newStatus: "pending" | "preparing" | "ready" | "delivered" | "scheduled" | "cancelled" | null = null;
     
     if (overId === "pending" || orders.find(o => o.id === overId)?.status === "pending") {
       newStatus = "pending";
@@ -150,6 +177,10 @@ const Orders = () => {
       newStatus = "ready";
     } else if (overId === "delivered" || orders.find(o => o.id === overId)?.status === "delivered") {
       newStatus = "delivered";
+    } else if (overId === "scheduled" || orders.find(o => o.id === overId)?.status === "scheduled") {
+      newStatus = "scheduled";
+    } else if (overId === "cancelled" || orders.find(o => o.id === overId)?.status === "cancelled") {
+      newStatus = "cancelled";
     }
 
     if (newStatus && activeOrder.status !== newStatus) {
@@ -174,7 +205,7 @@ const Orders = () => {
     const activeOrder = orders.find(order => order.id === activeId);
     if (!activeOrder) return;
 
-    let newStatus: "pending" | "preparing" | "ready" | "delivered" | null = null;
+    let newStatus: "pending" | "preparing" | "ready" | "delivered" | "scheduled" | "cancelled" | null = null;
     
     if (overId === "pending" || orders.find(o => o.id === overId)?.status === "pending") {
       newStatus = "pending";
@@ -184,10 +215,22 @@ const Orders = () => {
       newStatus = "ready";
     } else if (overId === "delivered" || orders.find(o => o.id === overId)?.status === "delivered") {
       newStatus = "delivered";
+    } else if (overId === "scheduled" || orders.find(o => o.id === overId)?.status === "scheduled") {
+      newStatus = "scheduled";
+    } else if (overId === "cancelled" || orders.find(o => o.id === overId)?.status === "cancelled") {
+      newStatus = "cancelled";
     }
 
     if (newStatus && activeOrder.status !== newStatus) {
-      toast.success(`Pedido movido para ${newStatus === "preparing" ? "Preparando" : newStatus === "ready" ? "Pronto" : newStatus === "delivered" ? "Entregue" : "Pendente"}`);
+      const statusLabels = {
+        pending: "Pendente",
+        preparing: "Preparando",
+        ready: "Pronto",
+        delivered: "Entregue",
+        scheduled: "Agendado",
+        cancelled: "Cancelado"
+      };
+      toast.success(`Pedido movido para ${statusLabels[newStatus]}`);
     }
   };
 
@@ -295,7 +338,19 @@ const Orders = () => {
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 h-[calc(100vh-400px)]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 h-[calc(100vh-400px)]">
+          <KanbanColumn
+            id="scheduled"
+            title="Agendados"
+            count={getStatusCount("scheduled")}
+            color="bg-purple-100 text-purple-800"
+            itemIds={getOrdersByStatus("scheduled").map(o => o.id)}
+          >
+            {getOrdersByStatus("scheduled").map((order) => (
+              <KanbanCard key={order.id} {...order} />
+            ))}
+          </KanbanColumn>
+
           <KanbanColumn
             id="pending"
             title="Pendentes"
@@ -345,6 +400,18 @@ const Orders = () => {
             itemIds={getOrdersByStatus("delivered").map(o => o.id)}
           >
             {getOrdersByStatus("delivered").map((order) => (
+              <KanbanCard key={order.id} {...order} />
+            ))}
+          </KanbanColumn>
+
+          <KanbanColumn
+            id="cancelled"
+            title="Cancelados"
+            count={getStatusCount("cancelled")}
+            color="bg-red-100 text-red-800"
+            itemIds={getOrdersByStatus("cancelled").map(o => o.id)}
+          >
+            {getOrdersByStatus("cancelled").map((order) => (
               <KanbanCard key={order.id} {...order} />
             ))}
           </KanbanColumn>
