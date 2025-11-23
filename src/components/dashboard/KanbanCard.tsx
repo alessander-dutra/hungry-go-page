@@ -114,7 +114,7 @@ const KanbanCard = ({
       style={style}
       {...attributes}
       {...listeners}
-      className="cursor-move hover:shadow-lg transition-shadow"
+      className="cursor-move hover:shadow-lg transition-shadow touch-none"
     >
       <CardContent className="p-4 space-y-3">
         {/* Header */}
