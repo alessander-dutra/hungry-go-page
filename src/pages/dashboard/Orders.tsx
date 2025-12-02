@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import KanbanColumn from "@/components/dashboard/KanbanColumn";
 import KanbanCard from "@/components/dashboard/KanbanCard";
+import OrderDetailsModal from "@/components/dashboard/OrderDetailsModal";
 import {
   DndContext,
   DragEndEvent,
@@ -25,6 +26,26 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+interface StatusHistory {
+  status: string;
+  timestamp: string;
+  note?: string;
+}
+
+interface Order {
+  id: string;
+  customerName: string;
+  customerPhone: string;
+  address: string;
+  items: { name: string; quantity: number; price: number }[];
+  total: number;
+  status: "pending" | "preparing" | "ready" | "delivered" | "scheduled" | "cancelled";
+  createdAt: string;
+  estimatedTime: string;
+  customerNotes?: string;
+  statusHistory?: StatusHistory[];
+}
+
 const Orders = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -42,8 +63,11 @@ const Orders = () => {
     setTimeout(() => setRefreshing(false), 1000);
   };
 
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
   // Mock orders data with status management
-  const [orders, setOrders] = useState([
+  const [orders, setOrders] = useState<Order[]>([
     {
       id: "ORD001234",
       customerName: "João Silva",
@@ -54,9 +78,13 @@ const Orders = () => {
         { name: "Coca-Cola 2L", quantity: 1, price: 8.50 }
       ],
       total: 54.40,
-      status: "pending" as const,
+      status: "pending",
       createdAt: "14:23",
-      estimatedTime: "45 min"
+      estimatedTime: "45 min",
+      customerNotes: "Sem cebola na pizza, por favor.",
+      statusHistory: [
+        { status: "pending", timestamp: "14:23", note: "Pedido recebido" }
+      ]
     },
     {
       id: "ORD001235",
@@ -68,9 +96,14 @@ const Orders = () => {
         { name: "Batata Frita G", quantity: 1, price: 15.90 }
       ],
       total: 81.70,
-      status: "preparing" as const,
+      status: "preparing",
       createdAt: "14:05",
-      estimatedTime: "25 min"
+      estimatedTime: "25 min",
+      customerNotes: "Ponto da carne: ao ponto",
+      statusHistory: [
+        { status: "preparing", timestamp: "14:10", note: "Pedido aceito e em preparo" },
+        { status: "pending", timestamp: "14:05", note: "Pedido recebido" }
+      ]
     },
     {
       id: "ORD001236",
@@ -82,9 +115,14 @@ const Orders = () => {
         { name: "Suco Natural", quantity: 1, price: 12.50 }
       ],
       total: 41.40,
-      status: "ready" as const,
+      status: "ready",
       createdAt: "13:45",
-      estimatedTime: "Pronto"
+      estimatedTime: "Pronto",
+      statusHistory: [
+        { status: "ready", timestamp: "14:00", note: "Pedido pronto para entrega" },
+        { status: "preparing", timestamp: "13:50", note: "Pedido em preparo" },
+        { status: "pending", timestamp: "13:45", note: "Pedido recebido" }
+      ]
     },
     {
       id: "ORD001237",
@@ -96,9 +134,15 @@ const Orders = () => {
         { name: "Água com Gás", quantity: 1, price: 6.50 }
       ],
       total: 45.40,
-      status: "delivered" as const,
+      status: "delivered",
       createdAt: "12:30",
-      estimatedTime: "Entregue"
+      estimatedTime: "Entregue",
+      statusHistory: [
+        { status: "delivered", timestamp: "13:15", note: "Pedido entregue" },
+        { status: "ready", timestamp: "13:00", note: "Pedido pronto" },
+        { status: "preparing", timestamp: "12:40", note: "Pedido em preparo" },
+        { status: "pending", timestamp: "12:30", note: "Pedido recebido" }
+      ]
     },
     {
       id: "ORD001238",
@@ -110,9 +154,13 @@ const Orders = () => {
         { name: "Guaraná 2L", quantity: 1, price: 8.00 }
       ],
       total: 60.90,
-      status: "scheduled" as const,
+      status: "scheduled",
       createdAt: "10:30",
-      estimatedTime: "18:00"
+      estimatedTime: "18:00",
+      customerNotes: "Entregar após às 18h",
+      statusHistory: [
+        { status: "scheduled", timestamp: "10:30", note: "Pedido agendado para 18:00" }
+      ]
     },
     {
       id: "ORD001239",
@@ -123,9 +171,14 @@ const Orders = () => {
         { name: "Cheeseburger Duplo", quantity: 1, price: 35.90 }
       ],
       total: 35.90,
-      status: "cancelled" as const,
+      status: "cancelled",
       createdAt: "13:00",
-      estimatedTime: "Cancelado"
+      estimatedTime: "Cancelado",
+      customerNotes: "Cliente cancelou por demora",
+      statusHistory: [
+        { status: "cancelled", timestamp: "13:30", note: "Cancelado pelo cliente" },
+        { status: "pending", timestamp: "13:00", note: "Pedido recebido" }
+      ]
     }
   ]);
 
@@ -149,6 +202,23 @@ const Orders = () => {
 
   const handleCancelOrder = (orderId: string) => {
     setOrders(prevOrders => prevOrders.filter(order => order.id !== orderId));
+  };
+
+  const handleViewDetails = (orderId: string) => {
+    const order = orders.find(o => o.id === orderId);
+    if (order) {
+      setSelectedOrder(order);
+      setModalOpen(true);
+    }
+  };
+
+  const handleUpdateOrder = (updatedOrder: Order) => {
+    setOrders(prevOrders =>
+      prevOrders.map(order =>
+        order.id === updatedOrder.id ? updatedOrder : order
+      )
+    );
+    setSelectedOrder(updatedOrder);
   };
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -349,7 +419,7 @@ const Orders = () => {
                 itemIds={getOrdersByStatus("scheduled").map(o => o.id)}
               >
                 {getOrdersByStatus("scheduled").map((order) => (
-                  <KanbanCard key={order.id} {...order} />
+                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} />
                 ))}
               </KanbanColumn>
             </div>
@@ -368,6 +438,7 @@ const Orders = () => {
                     {...order}
                     onAccept={handleAcceptOrder}
                     onCancel={handleCancelOrder}
+                    onViewDetails={handleViewDetails}
                   />
                 ))}
               </KanbanColumn>
@@ -382,7 +453,7 @@ const Orders = () => {
                 itemIds={getOrdersByStatus("preparing").map(o => o.id)}
               >
                 {getOrdersByStatus("preparing").map((order) => (
-                  <KanbanCard key={order.id} {...order} />
+                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} />
                 ))}
               </KanbanColumn>
             </div>
@@ -396,7 +467,7 @@ const Orders = () => {
                 itemIds={getOrdersByStatus("ready").map(o => o.id)}
               >
                 {getOrdersByStatus("ready").map((order) => (
-                  <KanbanCard key={order.id} {...order} />
+                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} />
                 ))}
               </KanbanColumn>
             </div>
@@ -410,7 +481,7 @@ const Orders = () => {
                 itemIds={getOrdersByStatus("delivered").map(o => o.id)}
               >
                 {getOrdersByStatus("delivered").map((order) => (
-                  <KanbanCard key={order.id} {...order} />
+                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} />
                 ))}
               </KanbanColumn>
             </div>
@@ -424,7 +495,7 @@ const Orders = () => {
                 itemIds={getOrdersByStatus("cancelled").map(o => o.id)}
               >
                 {getOrdersByStatus("cancelled").map((order) => (
-                  <KanbanCard key={order.id} {...order} />
+                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} />
                 ))}
               </KanbanColumn>
             </div>
@@ -442,6 +513,13 @@ const Orders = () => {
           ) : null}
         </DragOverlay>
       </DndContext>
+
+      <OrderDetailsModal
+        order={selectedOrder}
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        onUpdateOrder={handleUpdateOrder}
+      />
     </div>
   );
 };
