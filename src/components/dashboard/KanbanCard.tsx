@@ -3,7 +3,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, X, Phone, MapPin, Clock, Eye } from "lucide-react";
+import { CheckCircle, X, Phone, MapPin, Clock, Eye, Printer } from "lucide-react";
 import { toast } from "sonner";
 
 interface OrderItem {
@@ -26,6 +26,7 @@ interface KanbanCardProps {
   onAccept?: (id: string) => void;
   onCancel?: (id: string) => void;
   onViewDetails?: (id: string) => void;
+  onPrint?: (id: string) => void;
 }
 
 const KanbanCard = ({
@@ -41,6 +42,7 @@ const KanbanCard = ({
   onAccept,
   onCancel,
   onViewDetails,
+  onPrint,
 }: KanbanCardProps) => {
   const {
     attributes,
@@ -118,6 +120,13 @@ const KanbanCard = ({
     }
   };
 
+  const handlePrint = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onPrint) {
+      onPrint(id);
+    }
+  };
+
   return (
     <Card
       ref={setNodeRef}
@@ -178,16 +187,25 @@ const KanbanCard = ({
           </span>
         </div>
 
-        {/* View Details Button */}
-        <Button
-          size="sm"
-          variant="outline"
-          className="w-full"
-          onClick={handleViewDetails}
-        >
-          <Eye className="h-4 w-4 mr-2" />
-          Ver Detalhes
-        </Button>
+        {/* Action Buttons */}
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            className="flex-1"
+            onClick={handleViewDetails}
+          >
+            <Eye className="h-4 w-4 mr-1" />
+            Detalhes
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handlePrint}
+          >
+            <Printer className="h-4 w-4" />
+          </Button>
+        </div>
 
         {/* Actions for Pending Orders */}
         {status === "pending" && (
