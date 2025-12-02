@@ -3,7 +3,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, X, Phone, MapPin, Clock } from "lucide-react";
+import { CheckCircle, X, Phone, MapPin, Clock, Eye } from "lucide-react";
 import { toast } from "sonner";
 
 interface OrderItem {
@@ -22,8 +22,10 @@ interface KanbanCardProps {
   status: "pending" | "preparing" | "ready" | "delivered" | "scheduled" | "cancelled";
   createdAt: string;
   estimatedTime: string;
+  customerNotes?: string;
   onAccept?: (id: string) => void;
   onCancel?: (id: string) => void;
+  onViewDetails?: (id: string) => void;
 }
 
 const KanbanCard = ({
@@ -38,6 +40,7 @@ const KanbanCard = ({
   estimatedTime,
   onAccept,
   onCancel,
+  onViewDetails,
 }: KanbanCardProps) => {
   const {
     attributes,
@@ -108,6 +111,13 @@ const KanbanCard = ({
     }
   };
 
+  const handleViewDetails = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onViewDetails) {
+      onViewDetails(id);
+    }
+  };
+
   return (
     <Card
       ref={setNodeRef}
@@ -168,9 +178,20 @@ const KanbanCard = ({
           </span>
         </div>
 
+        {/* View Details Button */}
+        <Button
+          size="sm"
+          variant="outline"
+          className="w-full"
+          onClick={handleViewDetails}
+        >
+          <Eye className="h-4 w-4 mr-2" />
+          Ver Detalhes
+        </Button>
+
         {/* Actions for Pending Orders */}
         {status === "pending" && (
-          <div className="flex gap-2 pt-2">
+          <div className="flex gap-2">
             <Button
               size="sm"
               className="flex-1"
