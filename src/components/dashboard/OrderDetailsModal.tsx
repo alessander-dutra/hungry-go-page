@@ -23,6 +23,7 @@ import {
   MessageSquare,
   Package,
   User,
+  Printer,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -57,6 +58,7 @@ interface OrderDetailsModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onUpdateOrder?: (order: Order) => void;
+  onPrint?: (orderId: string) => void;
 }
 
 const OrderDetailsModal = ({
@@ -64,6 +66,7 @@ const OrderDetailsModal = ({
   open,
   onOpenChange,
   onUpdateOrder,
+  onPrint,
 }: OrderDetailsModalProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedOrder, setEditedOrder] = useState<Order | null>(null);
@@ -348,10 +351,18 @@ const OrderDetailsModal = ({
               </Button>
             </>
           ) : (
-            <Button onClick={handleEdit}>
-              <Edit2 className="h-4 w-4 mr-2" />
-              Editar Pedido
-            </Button>
+            <>
+              {onPrint && (
+                <Button variant="outline" onClick={() => onPrint(order.id)}>
+                  <Printer className="h-4 w-4 mr-2" />
+                  Imprimir
+                </Button>
+              )}
+              <Button onClick={handleEdit}>
+                <Edit2 className="h-4 w-4 mr-2" />
+                Editar Pedido
+              </Button>
+            </>
           )}
         </DialogFooter>
       </DialogContent>

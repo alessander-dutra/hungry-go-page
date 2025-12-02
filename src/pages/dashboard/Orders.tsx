@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import KanbanColumn from "@/components/dashboard/KanbanColumn";
 import KanbanCard from "@/components/dashboard/KanbanCard";
 import OrderDetailsModal from "@/components/dashboard/OrderDetailsModal";
+import OrderAlertSettings from "@/components/dashboard/OrderAlertSettings";
+import PrintTicketModal from "@/components/dashboard/PrintTicketModal";
+import { useOrderAlerts } from "@/hooks/useOrderAlerts";
 import {
   DndContext,
   DragEndEvent,
@@ -49,6 +52,11 @@ interface Order {
 const Orders = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [printModalOpen, setPrintModalOpen] = useState(false);
+  const [orderToPrint, setOrderToPrint] = useState<Order | null>(null);
+  const { playSound } = useOrderAlerts();
   
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -63,8 +71,33 @@ const Orders = () => {
     setTimeout(() => setRefreshing(false), 1000);
   };
 
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
+  const handlePrintOrder = (orderId: string) => {
+    const order = orders.find(o => o.id === orderId);
+    if (order) {
+      setOrderToPrint(order);
+      setPrintModalOpen(true);
+    }
+  };
+
+  // Simulate new order arriving (for demo purposes)
+  const simulateNewOrder = () => {
+    const newOrder: Order = {
+      id: `ORD00${Date.now().toString().slice(-4)}`,
+      customerName: "Novo Cliente",
+      customerPhone: "(11) 12345-6789",
+      address: "Rua Nova, 100 - Centro, São Paulo - SP",
+      items: [{ name: "Pizza Margherita G", quantity: 1, price: 45.90 }],
+      total: 45.90,
+      status: "pending",
+      createdAt: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+      estimatedTime: "45 min",
+      statusHistory: [{ status: "pending", timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }), note: "Pedido recebido" }]
+    };
+    
+    setOrders(prev => [newOrder, ...prev]);
+    playSound();
+    toast.success("Novo pedido recebido!", { description: `Pedido #${newOrder.id}` });
+  };
 
   // Mock orders data with status management
   const [orders, setOrders] = useState<Order[]>([
@@ -318,6 +351,10 @@ const Orders = () => {
         </div>
         
         <div className="flex items-center space-x-3">
+          <OrderAlertSettings />
+          <Button variant="outline" size="sm" onClick={simulateNewOrder}>
+            + Simular Pedido
+          </Button>
           <Button variant="outline" size="sm" onClick={handleRefresh} disabled={refreshing}>
             <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
             Atualizar
@@ -419,7 +456,7 @@ const Orders = () => {
                 itemIds={getOrdersByStatus("scheduled").map(o => o.id)}
               >
                 {getOrdersByStatus("scheduled").map((order) => (
-                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} />
+                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
                 ))}
               </KanbanColumn>
             </div>
@@ -439,6 +476,7 @@ const Orders = () => {
                     onAccept={handleAcceptOrder}
                     onCancel={handleCancelOrder}
                     onViewDetails={handleViewDetails}
+                    onPrint={handlePrintOrder}
                   />
                 ))}
               </KanbanColumn>
@@ -453,7 +491,7 @@ const Orders = () => {
                 itemIds={getOrdersByStatus("preparing").map(o => o.id)}
               >
                 {getOrdersByStatus("preparing").map((order) => (
-                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} />
+                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
                 ))}
               </KanbanColumn>
             </div>
@@ -467,7 +505,7 @@ const Orders = () => {
                 itemIds={getOrdersByStatus("ready").map(o => o.id)}
               >
                 {getOrdersByStatus("ready").map((order) => (
-                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} />
+                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
                 ))}
               </KanbanColumn>
             </div>
@@ -481,7 +519,7 @@ const Orders = () => {
                 itemIds={getOrdersByStatus("delivered").map(o => o.id)}
               >
                 {getOrdersByStatus("delivered").map((order) => (
-                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} />
+                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
                 ))}
               </KanbanColumn>
             </div>
@@ -495,7 +533,7 @@ const Orders = () => {
                 itemIds={getOrdersByStatus("cancelled").map(o => o.id)}
               >
                 {getOrdersByStatus("cancelled").map((order) => (
-                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} />
+                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
                 ))}
               </KanbanColumn>
             </div>
@@ -519,6 +557,13 @@ const Orders = () => {
         open={modalOpen}
         onOpenChange={setModalOpen}
         onUpdateOrder={handleUpdateOrder}
+        onPrint={handlePrintOrder}
+      />
+
+      <PrintTicketModal
+        order={orderToPrint}
+        open={printModalOpen}
+        onOpenChange={setPrintModalOpen}
       />
     </div>
   );
