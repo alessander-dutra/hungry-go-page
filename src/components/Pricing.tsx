@@ -2,8 +2,19 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Check, Crown, Star, Zap } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Pricing = () => {
+  const navigate = useNavigate();
+
+  const handlePlanClick = (planName: string, cta: string) => {
+    if (cta === "Falar com Vendas") {
+      const message = encodeURIComponent(`Olá! Tenho interesse no plano ${planName} do DeliveryPro. Gostaria de mais informações.`);
+      window.open(`https://wa.me/5511999999999?text=${message}`, "_blank");
+    } else {
+      navigate(`/register?plan=${planName.toLowerCase()}`);
+    }
+  };
   const plans = [
     {
       name: "Starter",
@@ -143,6 +154,7 @@ const Pricing = () => {
                   variant={plan.variant} 
                   size="lg" 
                   className="w-full"
+                  onClick={() => handlePlanClick(plan.name, plan.cta)}
                 >
                   {plan.cta}
                 </Button>
