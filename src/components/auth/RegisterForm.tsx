@@ -19,7 +19,29 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const RegisterForm = () => {
+interface RegisterFormProps {
+  selectedPlan?: string;
+}
+
+const planDetails: Record<string, { name: string; commission: string; features: string[] }> = {
+  starter: {
+    name: "Starter",
+    commission: "5%",
+    features: ["Site próprio de delivery", "Integração WhatsApp básica", "Até 100 pedidos/mês"],
+  },
+  professional: {
+    name: "Professional",
+    commission: "7%",
+    features: ["IA integrada (chatbot avançado)", "Analytics preditivos", "Pedidos ilimitados"],
+  },
+  enterprise: {
+    name: "Enterprise",
+    commission: "8%",
+    features: ["Multi-lojas", "API personalizada", "Manager dedicado"],
+  },
+};
+
+const RegisterForm = ({ selectedPlan = "" }: RegisterFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -39,8 +61,13 @@ const RegisterForm = () => {
     
     // Step 3 - Agreements
     agreeTerms: false,
-    agreeMarketing: false
+    agreeMarketing: false,
+    
+    // Plan
+    plan: selectedPlan,
   });
+
+  const plan = planDetails[selectedPlan];
 
   const { toast } = useToast();
 
@@ -103,6 +130,26 @@ const RegisterForm = () => {
                 Vamos começar com as informações básicas
               </p>
             </div>
+
+            {/* Selected Plan Display */}
+            {plan && (
+              <div className="mb-6 p-4 rounded-lg border border-primary/30 bg-primary/5">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium">Plano selecionado:</span>
+                  <Badge variant="secondary" className="bg-primary/10 text-primary">
+                    {plan.name} - {plan.commission}/pedido
+                  </Badge>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {plan.features.map((feature, idx) => (
+                    <Badge key={idx} variant="outline" className="text-xs">
+                      <CheckCircle className="h-3 w-3 mr-1 text-green-600" />
+                      {feature}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="space-y-4">
               <div className="space-y-2">
