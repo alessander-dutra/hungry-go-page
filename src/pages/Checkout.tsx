@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,15 +32,52 @@ const Checkout = () => {
     validateStep
   } = useCheckout();
 
-  // Mock cart data (would come from cart context/state)
-  const cart = location.state?.cart || {
-    items: [
-      { id: "1", name: "Pizza Margherita", price: 45.90, quantity: 1 },
-      { id: "8", name: "Coca-Cola 2L", price: 8.50, quantity: 1 }
-    ],
-    subtotal: 54.40,
-    deliveryFee: 5.90,
-    total: 60.30
+  // Cart state (initialized from location state or defaults)
+  const [cart, setCart] = useState(() => {
+    return location.state?.cart || {
+      items: [
+        { id: "1", name: "Pizza Margherita", price: 45.90, quantity: 1 },
+        { id: "8", name: "Coca-Cola 2L", price: 8.50, quantity: 1 }
+      ],
+      subtotal: 54.40,
+      deliveryFee: 5.90,
+      total: 60.30
+    };
+  });
+
+  const recalculateCart = (items: typeof cart.items) => {
+    const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const deliveryFee = 5.90;
+    return {
+      items,
+      subtotal,
+      deliveryFee,
+      total: subtotal + deliveryFee
+    };
+  };
+
+  const handleUpdateQuantity = (id: string, quantity: number) => {
+    setCart((prev: typeof cart) => {
+      const updatedItems = prev.items.map((item: typeof cart.items[0]) =>
+        item.id === id ? { ...item, quantity } : item
+      );
+      return recalculateCart(updatedItems);
+    });
+    toast({
+      title: "Quantidade atualizada",
+      description: "O item foi atualizado no seu pedido.",
+    });
+  };
+
+  const handleRemoveItem = (id: string) => {
+    setCart((prev: typeof cart) => {
+      const updatedItems = prev.items.filter((item: typeof cart.items[0]) => item.id !== id);
+      return recalculateCart(updatedItems);
+    });
+    toast({
+      title: "Item removido",
+      description: "O item foi removido do seu pedido.",
+    });
   };
 
   const restaurantInfo = {
@@ -255,6 +292,9 @@ const Checkout = () => {
                 cart={cart}
                 checkoutData={checkoutData}
                 restaurantInfo={restaurantInfo}
+                editable={true}
+                onUpdateQuantity={handleUpdateQuantity}
+                onRemoveItem={handleRemoveItem}
               />
             </div>
           </div>

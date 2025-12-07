@@ -10,8 +10,9 @@ import {
   Truck,
   Home
 } from "lucide-react";
-import { Cart } from "@/hooks/useCart";
+import { Cart, CartItem } from "@/hooks/useCart";
 import { CheckoutData } from "@/hooks/useCheckout";
+import EditableOrderItem from "./EditableOrderItem";
 
 interface OrderSummaryProps {
   cart: Cart;
@@ -21,9 +22,19 @@ interface OrderSummaryProps {
     deliveryTime: string;
     phone: string;
   };
+  editable?: boolean;
+  onUpdateQuantity?: (id: string, quantity: number) => void;
+  onRemoveItem?: (id: string) => void;
 }
 
-const OrderSummary = ({ cart, checkoutData, restaurantInfo }: OrderSummaryProps) => {
+const OrderSummary = ({ 
+  cart, 
+  checkoutData, 
+  restaurantInfo, 
+  editable = false,
+  onUpdateQuantity,
+  onRemoveItem 
+}: OrderSummaryProps) => {
   const getPaymentMethodName = (method?: string) => {
     switch (method) {
       case 'pix': return 'PIX';
@@ -58,22 +69,31 @@ const OrderSummary = ({ cart, checkoutData, restaurantInfo }: OrderSummaryProps)
             </div>
 
             {cart.items.map((item) => (
-              <div key={item.id} className="flex items-center justify-between py-2">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-muted rounded flex items-center justify-center text-xs">
-                    {item.quantity}x
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-medium text-sm">{item.name}</div>
-                    <div className="text-xs text-muted-foreground">
-                      R$ {item.price.toFixed(2)} cada
+              editable && onUpdateQuantity && onRemoveItem ? (
+                <EditableOrderItem
+                  key={item.id}
+                  item={item}
+                  onUpdateQuantity={onUpdateQuantity}
+                  onRemove={onRemoveItem}
+                />
+              ) : (
+                <div key={item.id} className="flex items-center justify-between py-2">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-muted rounded flex items-center justify-center text-xs">
+                      {item.quantity}x
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium text-sm">{item.name}</div>
+                      <div className="text-xs text-muted-foreground">
+                        R$ {item.price.toFixed(2)} cada
+                      </div>
                     </div>
                   </div>
+                  <div className="text-sm font-medium">
+                    R$ {(item.price * item.quantity).toFixed(2)}
+                  </div>
                 </div>
-                <div className="text-sm font-medium">
-                  R$ {(item.price * item.quantity).toFixed(2)}
-                </div>
-              </div>
+              )
             ))}
 
             <Separator />
