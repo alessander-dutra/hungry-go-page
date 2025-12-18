@@ -10,6 +10,7 @@
 ## 💼 Sobre o Projeto
 
 Plataforma web moderna de delivery e gerenciamento de pedidos desenvolvida com **Lovable**, otimizada para performance e escalabilidade. Sistema completo para restaurantes gerenciarem seus pedidos, cardápio e operações.
+<img width="926" height="831" alt="image" src="https://github.com/user-attachments/assets/3bfbad59-0fb8-48d1-9599-44fd6188bb87" />
 
 ---
 
