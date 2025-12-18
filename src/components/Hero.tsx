@@ -90,7 +90,7 @@ const Hero = () => {
 
             {/* Social Proof - Modern Client Showcase */}
             <div className="mt-12 pt-8 border-t border-border">
-              <div className="flex items-center gap-2 mb-6">
+              <div className="flex items-center gap-2 mb-6 justify-center md:justify-start">
                 <div className="flex -space-x-2">
                   {[...Array(4)].map((_, i) => (
                     <div 
@@ -107,7 +107,7 @@ const Hero = () => {
               </div>
               
               {/* Client Cards Grid */}
-              <div className="flex gap-3 overflow-x-auto pb-2">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 {clients.map((client, idx) => {
                   const IconComponent = client.icon;
                   return (
@@ -118,23 +118,23 @@ const Hero = () => {
                       {/* Gradient accent */}
                       <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${client.gradient}`} />
                       
-                      <div className="flex items-start gap-3">
+                      <div className="flex items-start gap-2 sm:gap-3">
                         {/* Icon */}
-                        <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${client.gradient} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300`}>
-                          <IconComponent className="w-5 h-5 text-white" />
+                        <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br ${client.gradient} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300`}>
+                          <IconComponent className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                         </div>
                         
                         {/* Info */}
-                        <div className="min-w-0">
-                          <h4 className="font-semibold text-sm truncate">{client.name}</h4>
+                        <div className="min-w-0 flex-1">
+                          <h4 className="font-semibold text-xs sm:text-sm truncate">{client.name}</h4>
                           <p className="text-xs text-muted-foreground">{client.category}</p>
-                          <div className="flex items-center gap-2 mt-1">
+                          <div className="flex items-center gap-1 sm:gap-2 mt-1 flex-wrap">
                             <div className="flex items-center gap-0.5">
                               <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
                               <span className="text-xs font-medium">{client.rating}</span>
                             </div>
-                            <span className="text-xs text-muted-foreground">•</span>
-                            <span className="text-xs text-muted-foreground">{client.orders} pedidos</span>
+                            <span className="text-xs text-muted-foreground hidden sm:inline">•</span>
+                            <span className="text-xs text-muted-foreground hidden sm:inline">{client.orders} pedidos</span>
                           </div>
                         </div>
                       </div>
