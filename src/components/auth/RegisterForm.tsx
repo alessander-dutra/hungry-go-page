@@ -19,6 +19,7 @@ import {
   AlertCircle
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { usePhoneMask } from "@/hooks/usePhoneMask";
 
 interface RegisterFormProps {
   selectedPlan?: string;
@@ -53,8 +54,8 @@ const step1Schema = z.object({
     .max(255, "E-mail deve ter no máximo 255 caracteres"),
   phone: z.string()
     .min(10, "Telefone deve ter pelo menos 10 dígitos")
-    .max(15, "Telefone deve ter no máximo 15 dígitos")
-    .regex(/^[\d\s()+-]+$/, "Telefone deve conter apenas números e caracteres válidos"),
+    .max(11, "Telefone deve ter no máximo 11 dígitos")
+    .regex(/^\d+$/, "Telefone inválido"),
   password: z.string()
     .min(6, "Senha deve ter pelo menos 6 caracteres")
     .max(50, "Senha deve ter no máximo 50 caracteres")
@@ -108,6 +109,7 @@ const RegisterForm = ({ selectedPlan = "" }: RegisterFormProps) => {
 
   const plan = planDetails[selectedPlan];
   const { toast } = useToast();
+  const { formatPhone, unformatPhone } = usePhoneMask();
 
   const validateField = (field: string, value: string | boolean) => {
     try {
@@ -175,7 +177,7 @@ const RegisterForm = ({ selectedPlan = "" }: RegisterFormProps) => {
         result = step1Schema.safeParse({
           name: formData.name,
           email: formData.email,
-          phone: formData.phone,
+          phone: unformatPhone(formData.phone),
           password: formData.password,
           confirmPassword: formData.confirmPassword,
         });
@@ -256,19 +258,32 @@ const RegisterForm = ({ selectedPlan = "" }: RegisterFormProps) => {
   };
 
   const handleInputChange = (field: string, value: string | boolean) => {
+    const processedValue = field === "phone" && typeof value === "string" 
+      ? formatPhone(value) 
+      : value;
+    
     setFormData(prev => ({
       ...prev,
-      [field]: value
+      [field]: processedValue
     }));
     
     if (touched[field]) {
-      validateField(field, value);
+      // For phone validation, use unformatted value
+      const validationValue = field === "phone" && typeof processedValue === "string"
+        ? unformatPhone(processedValue)
+        : processedValue;
+      validateField(field, validationValue);
     }
   };
 
   const handleBlur = (field: string) => {
     setTouched(prev => ({ ...prev, [field]: true }));
-    validateField(field, formData[field as keyof typeof formData]);
+    const value = formData[field as keyof typeof formData];
+    // For phone validation, use unformatted value
+    const validationValue = field === "phone" && typeof value === "string"
+      ? unformatPhone(value)
+      : value;
+    validateField(field, validationValue);
   };
 
   const renderFieldError = (field: string) => {
@@ -297,7 +312,7 @@ const RegisterForm = ({ selectedPlan = "" }: RegisterFormProps) => {
         return step1Schema.safeParse({
           name: formData.name,
           email: formData.email,
-          phone: formData.phone,
+          phone: unformatPhone(formData.phone),
           password: formData.password,
           confirmPassword: formData.confirmPassword,
         }).success;
