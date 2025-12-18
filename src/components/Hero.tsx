@@ -107,7 +107,7 @@ const Hero = () => {
               </div>
               
               {/* Client Cards Grid */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="flex gap-3 overflow-x-auto pb-2">
                 {clients.map((client, idx) => {
                   const IconComponent = client.icon;
                   return (
