@@ -113,7 +113,7 @@ const Hero = () => {
                   return (
                     <div 
                       key={idx}
-                      className="group relative bg-card border border-border rounded-xl p-3 hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer overflow-hidden"
+                      className="group relative bg-card border border-border rounded-xl p-4 hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer overflow-hidden min-w-[160px]"
                     >
                       {/* Gradient accent */}
                       <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${client.gradient}`} />
