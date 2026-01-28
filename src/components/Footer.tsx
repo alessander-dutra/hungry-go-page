@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Mail, Phone, MapPin } from "lucide-react";
+import ChatButton from "@/components/chat/ChatButton";
 
 const Footer = () => {
   return (
@@ -101,9 +102,7 @@ const Footer = () => {
             
             <div className="mt-6">
               <h4 className="font-medium mb-3">Suporte 24/7</h4>
-              <Button variant="premium" size="sm" className="group bg-background text-foreground hover:bg-background/90">
-                Abrir Chat
-              </Button>
+              <ChatButton variant="inline" />
             </div>
           </div>
         </div>
