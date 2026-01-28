@@ -77,7 +77,7 @@ const Pricing = () => {
   const comparison = [
     { feature: "iFood", price: "20-25%", color: "text-red-600" },
     { feature: "Rappi", price: "22-27%", color: "text-red-600" },
-    { feature: "Uber Eats", price: "18-30%", color: "text-red-600" },
+    { feature: "99Foods", price: "18-30%", color: "text-red-600" },
     { feature: "DeliveryPro", price: "5-8%", color: "text-green-600 font-bold" }
   ];
 
