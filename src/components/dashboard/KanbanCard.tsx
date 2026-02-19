@@ -133,16 +133,16 @@ const KanbanCard = ({
       style={style}
       {...attributes}
       {...listeners}
-      className="cursor-move hover:shadow-lg transition-shadow touch-none"
+      className="cursor-move hover:shadow-lg transition-shadow touch-none w-full"
     >
-      <CardContent className="p-4 space-y-3">
+      <CardContent className="p-3 sm:p-4 space-y-2 sm:space-y-3">
         {/* Header */}
-        <div className="flex items-start justify-between">
-          <div>
-            <h4 className="font-semibold text-lg">Pedido #{id}</h4>
-            <Badge className={getStatusColor()}>{getStatusLabel()}</Badge>
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <h4 className="font-semibold text-sm sm:text-base truncate">#{id}</h4>
+            <Badge className={`${getStatusColor()} text-xs mt-1`}>{getStatusLabel()}</Badge>
           </div>
-          <div className="text-right text-sm">
+          <div className="text-right text-xs sm:text-sm flex-shrink-0">
             <p className="text-muted-foreground">{createdAt}</p>
             <p className="font-medium flex items-center gap-1 justify-end">
               <Clock className="h-3 w-3" />
@@ -152,79 +152,84 @@ const KanbanCard = ({
         </div>
 
         {/* Customer Info */}
-        <div className="space-y-2 border-t pt-3">
-          <p className="font-medium">{customerName}</p>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Phone className="h-3 w-3" />
-            <span>{customerPhone}</span>
+        <div className="space-y-1.5 border-t pt-2 sm:pt-3">
+          <p className="font-medium text-sm truncate">{customerName}</p>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <Phone className="h-3 w-3 flex-shrink-0" />
+            <span className="truncate">{customerPhone}</span>
           </div>
-          <div className="flex items-start gap-2 text-sm text-muted-foreground">
+          <div className="flex items-start gap-2 text-xs text-muted-foreground">
             <MapPin className="h-3 w-3 mt-0.5 flex-shrink-0" />
             <span className="line-clamp-2">{address}</span>
           </div>
         </div>
 
         {/* Items */}
-        <div className="space-y-1 border-t pt-3">
-          <p className="text-sm font-medium">Itens do Pedido:</p>
-          {items.map((item, index) => (
-            <div key={index} className="flex justify-between text-sm">
-              <span className="text-muted-foreground">
+        <div className="space-y-1 border-t pt-2 sm:pt-3">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Itens</p>
+          {items.slice(0, 3).map((item, index) => (
+            <div key={index} className="flex justify-between text-xs gap-2">
+              <span className="text-muted-foreground truncate">
                 {item.quantity}x {item.name}
               </span>
-              <span className="font-medium">
+              <span className="font-medium flex-shrink-0">
                 R$ {item.price.toFixed(2)}
               </span>
             </div>
           ))}
+          {items.length > 3 && (
+            <p className="text-xs text-muted-foreground">+{items.length - 3} item(s)...</p>
+          )}
         </div>
 
         {/* Total */}
-        <div className="flex justify-between items-center border-t pt-3">
-          <span className="font-semibold">Total:</span>
-          <span className="font-bold text-lg">
+        <div className="flex justify-between items-center border-t pt-2 sm:pt-3">
+          <span className="font-semibold text-sm">Total:</span>
+          <span className="font-bold text-base sm:text-lg">
             R$ {total.toFixed(2)}
           </span>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-2">
+        <div className="flex gap-1.5 sm:gap-2">
           <Button
             size="sm"
             variant="outline"
-            className="flex-1"
+            className="flex-1 text-xs h-8"
             onClick={handleViewDetails}
           >
-            <Eye className="h-4 w-4 mr-1" />
-            Detalhes
+            <Eye className="h-3 w-3 mr-1" />
+            <span className="hidden sm:inline">Detalhes</span>
+            <span className="sm:hidden">Ver</span>
           </Button>
           <Button
             size="sm"
             variant="outline"
+            className="h-8 w-8 p-0"
             onClick={handlePrint}
           >
-            <Printer className="h-4 w-4" />
+            <Printer className="h-3 w-3" />
           </Button>
         </div>
 
         {/* Actions for Pending Orders */}
         {status === "pending" && (
-          <div className="flex gap-2">
+          <div className="flex gap-1.5 sm:gap-2">
             <Button
               size="sm"
-              className="flex-1"
+              className="flex-1 text-xs h-8"
               onClick={handleAccept}
             >
-              <CheckCircle className="h-4 w-4 mr-1" />
+              <CheckCircle className="h-3 w-3 mr-1" />
               Aceitar
             </Button>
             <Button
               size="sm"
               variant="destructive"
-              className="flex-1"
+              className="flex-1 text-xs h-8"
               onClick={handleCancel}
             >
-              <X className="h-4 w-4 mr-1" />
+              <X className="h-3 w-3 mr-1" />
               Recusar
             </Button>
           </div>
