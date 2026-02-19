@@ -201,7 +201,7 @@ const HowItWorks = () => {
 
           {/* Below carousel badge */}
           <div className="mt-6 flex justify-start">
-            <div className="<div className=\"absolute -bottom-4 -left-4 bg-background rounded-xl p-4 shadow-lg border border-border z-10 px-[16px]\">">
+            <div className="bg-background rounded-xl p-4 shadow-lg border border-border">
               <div className="text-sm font-medium text-primary">💡 IA ativa</div>
               <div className="text-xs text-muted-foreground">Otimizando vendas</div>
             </div>
