@@ -12,73 +12,73 @@ import pizzaMargherita from "@/assets/pizza-margherita.jpg";
 import salada from "@/assets/salada-caesar.jpg";
 
 const carouselSlides = [
-  {
-    src: dashboardImage,
-    alt: "Dashboard DeliveryPro",
-    label: "📊 Dashboard Completo",
-    description: "Gerencie pedidos em tempo real"
-  },
-  {
-    src: whatsappBot,
-    alt: "Integração WhatsApp",
-    label: "💬 WhatsApp Integrado",
-    description: "Pedidos direto no seu celular"
-  },
-  {
-    src: hamburguerArtesanal,
-    alt: "Cardápio Digital",
-    label: "🍔 Cardápio Digital",
-    description: "Monte seu menu com fotos incríveis"
-  },
-  {
-    src: pizzaMargherita,
-    alt: "Pizza no cardápio",
-    label: "🍕 Qualquer Culinária",
-    description: "Funciona para todo tipo de restaurante"
-  },
-  {
-    src: salada,
-    alt: "Salada no cardápio",
-    label: "🥗 Diversidade de Produtos",
-    description: "Adicione quantos itens quiser"
-  },
-];
+{
+  src: dashboardImage,
+  alt: "Dashboard DeliveryPro",
+  label: "📊 Dashboard Completo",
+  description: "Gerencie pedidos em tempo real"
+},
+{
+  src: whatsappBot,
+  alt: "Integração WhatsApp",
+  label: "💬 WhatsApp Integrado",
+  description: "Pedidos direto no seu celular"
+},
+{
+  src: hamburguerArtesanal,
+  alt: "Cardápio Digital",
+  label: "🍔 Cardápio Digital",
+  description: "Monte seu menu com fotos incríveis"
+},
+{
+  src: pizzaMargherita,
+  alt: "Pizza no cardápio",
+  label: "🍕 Qualquer Culinária",
+  description: "Funciona para todo tipo de restaurante"
+},
+{
+  src: salada,
+  alt: "Salada no cardápio",
+  label: "🥗 Diversidade de Produtos",
+  description: "Adicione quantos itens quiser"
+}];
+
 
 const HowItWorks = () => {
   const steps = [
-    {
-      number: "01",
-      title: "Cadastro Rápido",
-      description: "Crie sua conta em 2 minutos. Adicione informações básicas do seu restaurante.",
-      time: "2 min",
-      icon: Clock
-    },
-    {
-      number: "02", 
-      title: "Configure seu Cardápio",
-      description: "Adicione produtos, fotos e preços. Nossa IA ajuda com descrições otimizadas.",
-      time: "10 min",
-      icon: Settings
-    },
-    {
-      number: "03",
-      title: "Conecte o WhatsApp",
-      description: "Vincule seu WhatsApp Business. Receba pedidos direto no seu celular.",
-      time: "3 min",
-      icon: CheckCircle
-    },
-    {
-      number: "04",
-      title: "Comece a Vender",
-      description: "Está pronto! Clientes podem pedir pelo seu site e WhatsApp. IA cuida do resto.",
-      time: "0 min",
-      icon: Rocket
-    }
-  ];
+  {
+    number: "01",
+    title: "Cadastro Rápido",
+    description: "Crie sua conta em 2 minutos. Adicione informações básicas do seu restaurante.",
+    time: "2 min",
+    icon: Clock
+  },
+  {
+    number: "02",
+    title: "Configure seu Cardápio",
+    description: "Adicione produtos, fotos e preços. Nossa IA ajuda com descrições otimizadas.",
+    time: "10 min",
+    icon: Settings
+  },
+  {
+    number: "03",
+    title: "Conecte o WhatsApp",
+    description: "Vincule seu WhatsApp Business. Receba pedidos direto no seu celular.",
+    time: "3 min",
+    icon: CheckCircle
+  },
+  {
+    number: "04",
+    title: "Comece a Vender",
+    description: "Está pronto! Clientes podem pedir pelo seu site e WhatsApp. IA cuida do resto.",
+    time: "0 min",
+    icon: Rocket
+  }];
+
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
-    Autoplay({ delay: 3500, stopOnInteraction: false })
-  ]);
+  Autoplay({ delay: 3500, stopOnInteraction: false })]
+  );
 
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
@@ -126,8 +126,8 @@ const HowItWorks = () => {
                         {step.description}
                       </p>
                     </div>
-                  </div>
-                );
+                  </div>);
+
               })}
             </div>
 
@@ -154,20 +154,20 @@ const HowItWorks = () => {
               <CardContent className="p-0 relative">
                 <div className="overflow-hidden" ref={emblaRef}>
                   <div className="flex">
-                    {carouselSlides.map((slide, index) => (
-                      <div key={index} className="flex-[0_0_100%] min-w-0 relative">
+                    {carouselSlides.map((slide, index) =>
+                    <div key={index} className="flex-[0_0_100%] min-w-0 relative">
                         <img
-                          src={slide.src}
-                          alt={slide.alt}
-                          className="w-full h-72 lg:h-96 object-cover"
-                        />
+                        src={slide.src}
+                        alt={slide.alt}
+                        className="w-full h-72 lg:h-96 object-cover" />
+
                         {/* Slide label */}
                         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-5">
                           <div className="text-white font-semibold text-lg">{slide.label}</div>
                           <div className="text-white/80 text-sm">{slide.description}</div>
                         </div>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
 
@@ -175,15 +175,15 @@ const HowItWorks = () => {
                 <button
                   onClick={scrollPrev}
                   className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-background/80 backdrop-blur-sm border border-border flex items-center justify-center hover:bg-background transition-colors shadow-md"
-                  aria-label="Anterior"
-                >
+                  aria-label="Anterior">
+
                   <ChevronLeft size={18} className="text-foreground" />
                 </button>
                 <button
                   onClick={scrollNext}
                   className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-background/80 backdrop-blur-sm border border-border flex items-center justify-center hover:bg-background transition-colors shadow-md"
-                  aria-label="Próximo"
-                >
+                  aria-label="Próximo">
+
                   <ChevronRight size={18} className="text-foreground" />
                 </button>
               </CardContent>
@@ -197,7 +197,7 @@ const HowItWorks = () => {
               </div>
             </div>
 
-            <div className="absolute -bottom-4 -left-4 bg-background rounded-xl p-4 shadow-lg border border-border z-10">
+            <div className="absolute -bottom-4 -left-4 bg-background rounded-xl p-4 shadow-lg border border-border z-10 px-[16px]">
               <div className="text-sm font-medium text-primary">💡 IA ativa</div>
               <div className="text-xs text-muted-foreground">Otimizando vendas</div>
             </div>
@@ -224,8 +224,8 @@ const HowItWorks = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>);
+
 };
 
 export default HowItWorks;
