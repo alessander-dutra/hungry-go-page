@@ -17,17 +17,17 @@ const KanbanColumn = ({ id, title, count, color, children, itemIds }: KanbanColu
 
   return (
     <Card className={`flex flex-col h-full ${isOver ? 'ring-2 ring-primary' : ''}`}>
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-2 px-3 sm:px-6 sm:pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold">{title}</CardTitle>
-          <Badge variant="secondary" className={color}>
+          <CardTitle className="text-sm sm:text-base font-semibold">{title}</CardTitle>
+          <Badge variant="secondary" className={`${color} text-xs`}>
             {count}
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="flex-1 overflow-y-auto">
+      <CardContent className="flex-1 overflow-y-auto px-3 sm:px-6">
         <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
-          <div ref={setNodeRef} className="space-y-3 min-h-[200px]">
+          <div ref={setNodeRef} className="space-y-2 sm:space-y-3 min-h-[120px] sm:min-h-[200px]">
             {children}
           </div>
         </SortableContext>

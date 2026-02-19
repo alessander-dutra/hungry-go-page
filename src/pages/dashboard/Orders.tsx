@@ -446,97 +446,85 @@ const Orders = () => {
         onDragEnd={handleDragEnd}
       >
         <div className="overflow-x-auto pb-4">
-          <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 min-h-[calc(100vh-400px)]">
-            <div className="min-w-[280px] md:min-w-0 flex-shrink-0">
-              <KanbanColumn
-                id="scheduled"
-                title="Agendados"
-                count={getStatusCount("scheduled")}
-                color="bg-purple-100 text-purple-800"
-                itemIds={getOrdersByStatus("scheduled").map(o => o.id)}
-              >
-                {getOrdersByStatus("scheduled").map((order) => (
-                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
-                ))}
-              </KanbanColumn>
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 min-h-[calc(100vh-400px)] min-w-[320px]">
+            <KanbanColumn
+              id="scheduled"
+              title="Agendados"
+              count={getStatusCount("scheduled")}
+              color="bg-purple-100 text-purple-800"
+              itemIds={getOrdersByStatus("scheduled").map(o => o.id)}
+            >
+              {getOrdersByStatus("scheduled").map((order) => (
+                <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
+              ))}
+            </KanbanColumn>
 
-            <div className="min-w-[280px] md:min-w-0 flex-shrink-0">
-              <KanbanColumn
-                id="pending"
-                title="Pendentes"
-                count={getStatusCount("pending")}
-                color="bg-yellow-100 text-yellow-800"
-                itemIds={getOrdersByStatus("pending").map(o => o.id)}
-              >
-                {getOrdersByStatus("pending").map((order) => (
-                  <KanbanCard
-                    key={order.id}
-                    {...order}
-                    onAccept={handleAcceptOrder}
-                    onCancel={handleCancelOrder}
-                    onViewDetails={handleViewDetails}
-                    onPrint={handlePrintOrder}
-                  />
-                ))}
-              </KanbanColumn>
-            </div>
+            <KanbanColumn
+              id="pending"
+              title="Pendentes"
+              count={getStatusCount("pending")}
+              color="bg-yellow-100 text-yellow-800"
+              itemIds={getOrdersByStatus("pending").map(o => o.id)}
+            >
+              {getOrdersByStatus("pending").map((order) => (
+                <KanbanCard
+                  key={order.id}
+                  {...order}
+                  onAccept={handleAcceptOrder}
+                  onCancel={handleCancelOrder}
+                  onViewDetails={handleViewDetails}
+                  onPrint={handlePrintOrder}
+                />
+              ))}
+            </KanbanColumn>
 
-            <div className="min-w-[280px] md:min-w-0 flex-shrink-0">
-              <KanbanColumn
-                id="preparing"
-                title="Preparando"
-                count={getStatusCount("preparing")}
-                color="bg-orange-100 text-orange-800"
-                itemIds={getOrdersByStatus("preparing").map(o => o.id)}
-              >
-                {getOrdersByStatus("preparing").map((order) => (
-                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
-                ))}
-              </KanbanColumn>
-            </div>
+            <KanbanColumn
+              id="preparing"
+              title="Preparando"
+              count={getStatusCount("preparing")}
+              color="bg-orange-100 text-orange-800"
+              itemIds={getOrdersByStatus("preparing").map(o => o.id)}
+            >
+              {getOrdersByStatus("preparing").map((order) => (
+                <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
+              ))}
+            </KanbanColumn>
 
-            <div className="min-w-[280px] md:min-w-0 flex-shrink-0">
-              <KanbanColumn
-                id="ready"
-                title="Prontos"
-                count={getStatusCount("ready")}
-                color="bg-green-100 text-green-800"
-                itemIds={getOrdersByStatus("ready").map(o => o.id)}
-              >
-                {getOrdersByStatus("ready").map((order) => (
-                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
-                ))}
-              </KanbanColumn>
-            </div>
+            <KanbanColumn
+              id="ready"
+              title="Prontos"
+              count={getStatusCount("ready")}
+              color="bg-green-100 text-green-800"
+              itemIds={getOrdersByStatus("ready").map(o => o.id)}
+            >
+              {getOrdersByStatus("ready").map((order) => (
+                <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
+              ))}
+            </KanbanColumn>
 
-            <div className="min-w-[280px] md:min-w-0 flex-shrink-0">
-              <KanbanColumn
-                id="delivered"
-                title="Entregues"
-                count={getStatusCount("delivered")}
-                color="bg-blue-100 text-blue-800"
-                itemIds={getOrdersByStatus("delivered").map(o => o.id)}
-              >
-                {getOrdersByStatus("delivered").map((order) => (
-                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
-                ))}
-              </KanbanColumn>
-            </div>
+            <KanbanColumn
+              id="delivered"
+              title="Entregues"
+              count={getStatusCount("delivered")}
+              color="bg-blue-100 text-blue-800"
+              itemIds={getOrdersByStatus("delivered").map(o => o.id)}
+            >
+              {getOrdersByStatus("delivered").map((order) => (
+                <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
+              ))}
+            </KanbanColumn>
 
-            <div className="min-w-[280px] md:min-w-0 flex-shrink-0">
-              <KanbanColumn
-                id="cancelled"
-                title="Cancelados"
-                count={getStatusCount("cancelled")}
-                color="bg-red-100 text-red-800"
-                itemIds={getOrdersByStatus("cancelled").map(o => o.id)}
-              >
-                {getOrdersByStatus("cancelled").map((order) => (
-                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
-                ))}
-              </KanbanColumn>
-            </div>
+            <KanbanColumn
+              id="cancelled"
+              title="Cancelados"
+              count={getStatusCount("cancelled")}
+              color="bg-red-100 text-red-800"
+              itemIds={getOrdersByStatus("cancelled").map(o => o.id)}
+            >
+              {getOrdersByStatus("cancelled").map((order) => (
+                <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
+              ))}
+            </KanbanColumn>
           </div>
         </div>
 
