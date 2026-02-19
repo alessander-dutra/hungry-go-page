@@ -147,7 +147,8 @@ const SupportChat = ({ isOpen, onClose }: SupportChatProps) => {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyPress}
             placeholder="Digite sua mensagem..."
-            className="flex-1 bg-background text-foreground placeholder:text-muted-foreground border-input"
+            className="flex-1"
+            style={{ backgroundColor: "#ffffff", color: "#1a1a2e", caretColor: "#1a1a2e" }}
             disabled={isLoading}
           />
           <Button
