@@ -1,8 +1,48 @@
+import { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, CheckCircle, Clock, Rocket, Settings } from "lucide-react";
+import { ArrowRight, CheckCircle, Clock, Rocket, Settings, ChevronLeft, ChevronRight } from "lucide-react";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
 import dashboardImage from "@/assets/dashboard-preview.jpg";
+import whatsappBot from "@/assets/whatsapp-bot.jpg";
+import hamburguerArtesanal from "@/assets/hamburguer-artesanal.jpg";
+import pizzaMargherita from "@/assets/pizza-margherita.jpg";
+import salada from "@/assets/salada-caesar.jpg";
+
+const carouselSlides = [
+  {
+    src: dashboardImage,
+    alt: "Dashboard DeliveryPro",
+    label: "📊 Dashboard Completo",
+    description: "Gerencie pedidos em tempo real"
+  },
+  {
+    src: whatsappBot,
+    alt: "Integração WhatsApp",
+    label: "💬 WhatsApp Integrado",
+    description: "Pedidos direto no seu celular"
+  },
+  {
+    src: hamburguerArtesanal,
+    alt: "Cardápio Digital",
+    label: "🍔 Cardápio Digital",
+    description: "Monte seu menu com fotos incríveis"
+  },
+  {
+    src: pizzaMargherita,
+    alt: "Pizza no cardápio",
+    label: "🍕 Qualquer Culinária",
+    description: "Funciona para todo tipo de restaurante"
+  },
+  {
+    src: salada,
+    alt: "Salada no cardápio",
+    label: "🥗 Diversidade de Produtos",
+    description: "Adicione quantos itens quiser"
+  },
+];
 
 const HowItWorks = () => {
   const steps = [
@@ -35,6 +75,13 @@ const HowItWorks = () => {
       icon: Rocket
     }
   ];
+
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
+    Autoplay({ delay: 3500, stopOnInteraction: false })
+  ]);
+
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   return (
     <section id="how-it-works" className="py-16 lg:py-24">
@@ -101,27 +148,56 @@ const HowItWorks = () => {
             </div>
           </div>
 
-          {/* Visual */}
+          {/* Carousel */}
           <div className="relative">
             <Card className="overflow-hidden shadow-2xl border-0">
-              <CardContent className="p-0">
-                <img 
-                  src={dashboardImage} 
-                  alt="Dashboard DeliveryPro" 
-                  className="w-full h-auto"
-                />
+              <CardContent className="p-0 relative">
+                <div className="overflow-hidden" ref={emblaRef}>
+                  <div className="flex">
+                    {carouselSlides.map((slide, index) => (
+                      <div key={index} className="flex-[0_0_100%] min-w-0 relative">
+                        <img
+                          src={slide.src}
+                          alt={slide.alt}
+                          className="w-full h-72 lg:h-96 object-cover"
+                        />
+                        {/* Slide label */}
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-5">
+                          <div className="text-white font-semibold text-lg">{slide.label}</div>
+                          <div className="text-white/80 text-sm">{slide.description}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Navigation buttons */}
+                <button
+                  onClick={scrollPrev}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-background/80 backdrop-blur-sm border border-border flex items-center justify-center hover:bg-background transition-colors shadow-md"
+                  aria-label="Anterior"
+                >
+                  <ChevronLeft size={18} className="text-foreground" />
+                </button>
+                <button
+                  onClick={scrollNext}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-background/80 backdrop-blur-sm border border-border flex items-center justify-center hover:bg-background transition-colors shadow-md"
+                  aria-label="Próximo"
+                >
+                  <ChevronRight size={18} className="text-foreground" />
+                </button>
               </CardContent>
             </Card>
 
             {/* Floating Elements */}
-            <div className="absolute -top-4 -right-4 bg-white rounded-xl p-4 shadow-lg border border-border">
+            <div className="absolute -top-4 -right-4 bg-background rounded-xl p-4 shadow-lg border border-border z-10">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                 <span className="text-sm font-medium">Sistema Online</span>
               </div>
             </div>
 
-            <div className="absolute -bottom-4 -left-4 bg-white rounded-xl p-4 shadow-lg border border-border">
+            <div className="absolute -bottom-4 -left-4 bg-background rounded-xl p-4 shadow-lg border border-border z-10">
               <div className="text-sm font-medium text-primary">💡 IA ativa</div>
               <div className="text-xs text-muted-foreground">Otimizando vendas</div>
             </div>
