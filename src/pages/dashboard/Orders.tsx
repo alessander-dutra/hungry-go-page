@@ -25,8 +25,15 @@ import {
   Download,
   Clock,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  LayoutGrid,
+  List,
+  Phone,
+  MapPin,
+  Eye,
+  Printer
 } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 
 interface StatusHistory {
@@ -56,6 +63,8 @@ const Orders = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [printModalOpen, setPrintModalOpen] = useState(false);
   const [orderToPrint, setOrderToPrint] = useState<Order | null>(null);
+  const [viewMode, setViewMode] = useState<"kanban" | "list">("kanban");
+  const isMobile = useIsMobile();
   const { playSound } = useOrderAlerts();
   
   const sensors = useSensors(
@@ -367,49 +376,49 @@ const Orders = () => {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
         <Card>
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Pendentes</p>
-                <p className="text-2xl font-bold text-yellow-600">{getStatusCount("pending")}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Pendentes</p>
+                <p className="text-xl sm:text-2xl font-bold text-yellow-600">{getStatusCount("pending")}</p>
               </div>
-              <AlertCircle className="h-8 w-8 text-yellow-600" />
+              <AlertCircle className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-600" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Preparando</p>
-                <p className="text-2xl font-bold text-orange-600">{getStatusCount("preparing")}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Preparando</p>
+                <p className="text-xl sm:text-2xl font-bold text-orange-600">{getStatusCount("preparing")}</p>
               </div>
-              <Clock className="h-8 w-8 text-orange-600" />
+              <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-orange-600" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Prontos</p>
-                <p className="text-2xl font-bold text-green-600">{getStatusCount("ready")}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Prontos</p>
+                <p className="text-xl sm:text-2xl font-bold text-green-600">{getStatusCount("ready")}</p>
               </div>
-              <CheckCircle className="h-8 w-8 text-green-600" />
+              <CheckCircle className="h-6 w-6 sm:h-8 sm:w-8 text-green-600" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Hoje</p>
-                <p className="text-2xl font-bold">{orders.length}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Hoje</p>
+                <p className="text-xl sm:text-2xl font-bold">{orders.length}</p>
               </div>
               <div className="text-xs text-muted-foreground">Total</div>
             </div>
@@ -430,6 +439,24 @@ const Orders = () => {
                 />
               </div>
             </div>
+            <div className="flex items-center border rounded-md">
+              <Button
+                variant={viewMode === "kanban" ? "default" : "ghost"}
+                size="sm"
+                className="h-8 px-2"
+                onClick={() => setViewMode("kanban")}
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === "list" ? "default" : "ghost"}
+                size="sm"
+                className="h-8 px-2"
+                onClick={() => setViewMode("list")}
+              >
+                <List className="h-4 w-4" />
+              </Button>
+            </div>
             <Button variant="outline" size="sm">
               <Filter className="h-4 w-4 mr-2" />
               Filtros
@@ -438,107 +465,130 @@ const Orders = () => {
         </CardContent>
       </Card>
 
-      {/* Kanban Board */}
-      <DndContext
-        sensors={sensors}
-        onDragStart={handleDragStart}
-        onDragOver={handleDragOver}
-        onDragEnd={handleDragEnd}
-      >
-        <div className="overflow-x-auto pb-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 min-h-[calc(100vh-400px)] min-w-[320px]">
-            <KanbanColumn
-              id="scheduled"
-              title="Agendados"
-              count={getStatusCount("scheduled")}
-              color="bg-purple-100 text-purple-800"
-              itemIds={getOrdersByStatus("scheduled").map(o => o.id)}
-            >
-              {getOrdersByStatus("scheduled").map((order) => (
-                <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
-              ))}
-            </KanbanColumn>
-
-            <KanbanColumn
-              id="pending"
-              title="Pendentes"
-              count={getStatusCount("pending")}
-              color="bg-yellow-100 text-yellow-800"
-              itemIds={getOrdersByStatus("pending").map(o => o.id)}
-            >
-              {getOrdersByStatus("pending").map((order) => (
-                <KanbanCard
-                  key={order.id}
-                  {...order}
-                  onAccept={handleAcceptOrder}
-                  onCancel={handleCancelOrder}
-                  onViewDetails={handleViewDetails}
-                  onPrint={handlePrintOrder}
-                />
-              ))}
-            </KanbanColumn>
-
-            <KanbanColumn
-              id="preparing"
-              title="Preparando"
-              count={getStatusCount("preparing")}
-              color="bg-orange-100 text-orange-800"
-              itemIds={getOrdersByStatus("preparing").map(o => o.id)}
-            >
-              {getOrdersByStatus("preparing").map((order) => (
-                <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
-              ))}
-            </KanbanColumn>
-
-            <KanbanColumn
-              id="ready"
-              title="Prontos"
-              count={getStatusCount("ready")}
-              color="bg-green-100 text-green-800"
-              itemIds={getOrdersByStatus("ready").map(o => o.id)}
-            >
-              {getOrdersByStatus("ready").map((order) => (
-                <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
-              ))}
-            </KanbanColumn>
-
-            <KanbanColumn
-              id="delivered"
-              title="Entregues"
-              count={getStatusCount("delivered")}
-              color="bg-blue-100 text-blue-800"
-              itemIds={getOrdersByStatus("delivered").map(o => o.id)}
-            >
-              {getOrdersByStatus("delivered").map((order) => (
-                <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
-              ))}
-            </KanbanColumn>
-
-            <KanbanColumn
-              id="cancelled"
-              title="Cancelados"
-              count={getStatusCount("cancelled")}
-              color="bg-red-100 text-red-800"
-              itemIds={getOrdersByStatus("cancelled").map(o => o.id)}
-            >
-              {getOrdersByStatus("cancelled").map((order) => (
-                <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
-              ))}
-            </KanbanColumn>
-          </div>
+      {viewMode === "list" ? (
+        /* List View */
+        <div className="space-y-2">
+          {(["pending", "preparing", "ready", "scheduled", "delivered", "cancelled"] as const).map(status => {
+            const statusOrders = getOrdersByStatus(status);
+            if (statusOrders.length === 0) return null;
+            const statusLabels: Record<string, string> = {
+              pending: "Pendentes", preparing: "Preparando", ready: "Prontos",
+              scheduled: "Agendados", delivered: "Entregues", cancelled: "Cancelados"
+            };
+            const statusColors: Record<string, string> = {
+              pending: "bg-yellow-500", preparing: "bg-orange-500", ready: "bg-green-500",
+              scheduled: "bg-purple-500", delivered: "bg-blue-500", cancelled: "bg-red-500"
+            };
+            return (
+              <div key={status}>
+                <div className="flex items-center gap-2 mb-2">
+                  <div className={`w-2.5 h-2.5 rounded-full ${statusColors[status]}`} />
+                  <h3 className="font-semibold text-sm">{statusLabels[status]} ({statusOrders.length})</h3>
+                </div>
+                {statusOrders.map(order => (
+                  <Card key={order.id} className="mb-2">
+                    <CardContent className="p-3 sm:p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-semibold text-sm">#{order.id}</span>
+                            <span className="text-sm truncate">{order.customerName}</span>
+                            <span className="text-xs text-muted-foreground">{order.createdAt}</span>
+                          </div>
+                          <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
+                            <span className="flex items-center gap-1">
+                              <Phone className="h-3 w-3" />
+                              <span className="hidden sm:inline">{order.customerPhone}</span>
+                            </span>
+                            <span className="flex items-center gap-1 truncate">
+                              <MapPin className="h-3 w-3 flex-shrink-0" />
+                              <span className="truncate">{order.address}</span>
+                            </span>
+                          </div>
+                          <div className="mt-1 text-xs text-muted-foreground">
+                            {order.items.map(i => `${i.quantity}x ${i.name}`).join(", ")}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <span className="font-bold text-sm sm:text-base">R$ {order.total.toFixed(2)}</span>
+                          <Button size="sm" variant="outline" className="h-8 w-8 p-0" onClick={() => handleViewDetails(order.id)}>
+                            <Eye className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button size="sm" variant="outline" className="h-8 w-8 p-0" onClick={() => handlePrintOrder(order.id)}>
+                            <Printer className="h-3.5 w-3.5" />
+                          </Button>
+                          {order.status === "pending" && (
+                            <>
+                              <Button size="sm" className="h-8 text-xs" onClick={() => handleAcceptOrder(order.id)}>
+                                <CheckCircle className="h-3 w-3 mr-1" />
+                                Aceitar
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            );
+          })}
         </div>
+      ) : (
+        /* Kanban Board */
+        <DndContext
+          sensors={sensors}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDragEnd={handleDragEnd}
+        >
+          <div className="overflow-x-auto pb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 min-h-[calc(100vh-400px)] min-w-[320px]">
+              <KanbanColumn id="scheduled" title="Agendados" count={getStatusCount("scheduled")} color="bg-purple-100 text-purple-800" itemIds={getOrdersByStatus("scheduled").map(o => o.id)}>
+                {getOrdersByStatus("scheduled").map((order) => (
+                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
+                ))}
+              </KanbanColumn>
+              <KanbanColumn id="pending" title="Pendentes" count={getStatusCount("pending")} color="bg-yellow-100 text-yellow-800" itemIds={getOrdersByStatus("pending").map(o => o.id)}>
+                {getOrdersByStatus("pending").map((order) => (
+                  <KanbanCard key={order.id} {...order} onAccept={handleAcceptOrder} onCancel={handleCancelOrder} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
+                ))}
+              </KanbanColumn>
+              <KanbanColumn id="preparing" title="Preparando" count={getStatusCount("preparing")} color="bg-orange-100 text-orange-800" itemIds={getOrdersByStatus("preparing").map(o => o.id)}>
+                {getOrdersByStatus("preparing").map((order) => (
+                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
+                ))}
+              </KanbanColumn>
+              <KanbanColumn id="ready" title="Prontos" count={getStatusCount("ready")} color="bg-green-100 text-green-800" itemIds={getOrdersByStatus("ready").map(o => o.id)}>
+                {getOrdersByStatus("ready").map((order) => (
+                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
+                ))}
+              </KanbanColumn>
+              <KanbanColumn id="delivered" title="Entregues" count={getStatusCount("delivered")} color="bg-blue-100 text-blue-800" itemIds={getOrdersByStatus("delivered").map(o => o.id)}>
+                {getOrdersByStatus("delivered").map((order) => (
+                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
+                ))}
+              </KanbanColumn>
+              <KanbanColumn id="cancelled" title="Cancelados" count={getStatusCount("cancelled")} color="bg-red-100 text-red-800" itemIds={getOrdersByStatus("cancelled").map(o => o.id)}>
+                {getOrdersByStatus("cancelled").map((order) => (
+                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
+                ))}
+              </KanbanColumn>
+            </div>
+          </div>
 
-        <DragOverlay>
-          {activeOrder ? (
-            <Card className="opacity-90 rotate-3 cursor-grabbing">
-              <CardContent className="p-4">
-                <h4 className="font-semibold">Pedido #{activeOrder.id}</h4>
-                <p className="text-sm text-muted-foreground">{activeOrder.customerName}</p>
-              </CardContent>
-            </Card>
-          ) : null}
-        </DragOverlay>
-      </DndContext>
+          <DragOverlay>
+            {activeOrder ? (
+              <Card className="opacity-90 rotate-3 cursor-grabbing">
+                <CardContent className="p-4">
+                  <h4 className="font-semibold">Pedido #{activeOrder.id}</h4>
+                  <p className="text-sm text-muted-foreground">{activeOrder.customerName}</p>
+                </CardContent>
+              </Card>
+            ) : null}
+          </DragOverlay>
+        </DndContext>
+      )}
 
       <OrderDetailsModal
         order={selectedOrder}
