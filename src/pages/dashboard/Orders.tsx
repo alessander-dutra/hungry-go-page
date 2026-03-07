@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import KanbanColumn from "@/components/dashboard/KanbanColumn";
 import KanbanCard from "@/components/dashboard/KanbanCard";
 import OrderDetailsModal from "@/components/dashboard/OrderDetailsModal";
