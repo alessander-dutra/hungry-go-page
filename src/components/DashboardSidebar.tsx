@@ -9,7 +9,9 @@ import {
   MessageCircle,
   TrendingUp,
   Users,
-  LogOut
+  LogOut,
+  ChevronsLeft,
+  ChevronsRight
 } from "lucide-react";
 import {
   Sidebar,
