@@ -499,6 +499,20 @@ const Orders = () => {
         </CardContent>
       </Card>
 
+      {/* Scheduled Alerts */}
+      {scheduledAlerts.length > 0 && (
+        <Alert className="border-orange-300 bg-orange-50 dark:bg-orange-950/30 dark:border-orange-800">
+          <Bell className="h-4 w-4 text-orange-600" />
+          <AlertTitle className="text-orange-800 dark:text-orange-300">Pedidos agendados próximos!</AlertTitle>
+          <AlertDescription className="text-orange-700 dark:text-orange-400">
+            {scheduledAlerts.length === 1
+              ? `O pedido #${scheduledAlerts[0]} está agendado para os próximos 30 minutos.`
+              : `${scheduledAlerts.length} pedidos estão agendados para os próximos 30 minutos: ${scheduledAlerts.map(id => `#${id}`).join(', ')}`
+            }
+          </AlertDescription>
+        </Alert>
+      )}
+
       {viewMode === "list" ? (
         /* List View */
         <div className="space-y-2">
