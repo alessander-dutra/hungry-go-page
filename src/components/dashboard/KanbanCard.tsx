@@ -168,6 +168,16 @@ const KanbanCard = ({
           </div>
         </div>
 
+        {/* Scheduled Date/Time */}
+        {status === "scheduled" && scheduledDate && scheduledTime && (
+          <div className="flex items-center gap-2 text-xs bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-300 rounded-md px-2.5 py-1.5 border border-purple-200 dark:border-purple-800">
+            <CalendarClock className="h-3.5 w-3.5 flex-shrink-0" />
+            <span className="font-medium">
+              {scheduledDate} às {scheduledTime}
+            </span>
+          </div>
+        )}
+
         {/* Items */}
         <div className="space-y-1 border-t pt-2 sm:pt-3">
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Itens</p>

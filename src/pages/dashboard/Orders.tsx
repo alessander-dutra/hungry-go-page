@@ -201,9 +201,11 @@ const Orders = () => {
       status: "scheduled",
       createdAt: "10:30",
       estimatedTime: "18:00",
+      scheduledDate: new Date(Date.now() + 30 * 60 * 1000).toLocaleDateString('pt-BR'),
+      scheduledTime: new Date(Date.now() + 30 * 60 * 1000).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
       customerNotes: "Entregar após às 18h",
       statusHistory: [
-        { status: "scheduled", timestamp: "10:30", note: "Pedido agendado para 18:00" }
+        { status: "scheduled", timestamp: "10:30", note: "Pedido agendado" }
       ]
     },
     {
