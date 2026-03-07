@@ -8,6 +8,7 @@ import OrderDetailsModal from "@/components/dashboard/OrderDetailsModal";
 import OrderAlertSettings from "@/components/dashboard/OrderAlertSettings";
 import PrintTicketModal from "@/components/dashboard/PrintTicketModal";
 import { useOrderAlerts } from "@/hooks/useOrderAlerts";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import {
   DndContext,
   DragEndEvent,
@@ -31,7 +32,9 @@ import {
   Phone,
   MapPin,
   Eye,
-  Printer
+  Printer,
+  CalendarClock,
+  Bell
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
