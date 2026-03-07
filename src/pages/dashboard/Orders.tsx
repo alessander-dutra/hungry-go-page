@@ -556,6 +556,12 @@ const Orders = () => {
                           <div className="mt-1 text-xs text-muted-foreground">
                             {order.items.map(i => `${i.quantity}x ${i.name}`).join(", ")}
                           </div>
+                          {order.status === "scheduled" && order.scheduledDate && order.scheduledTime && (
+                            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/30 rounded px-2 py-1 w-fit border border-purple-200 dark:border-purple-800">
+                              <CalendarClock className="h-3 w-3" />
+                              <span className="font-medium">Agendado: {order.scheduledDate} às {order.scheduledTime}</span>
+                            </div>
+                          )}
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           <span className="font-bold text-sm sm:text-base">R$ {order.total.toFixed(2)}</span>
