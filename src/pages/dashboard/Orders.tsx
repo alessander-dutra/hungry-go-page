@@ -231,7 +231,33 @@ const Orders = () => {
     }
   ]);
 
-  const getOrdersByStatus = (status: string) => {
+  // Check scheduled orders proximity every 30 seconds
+  useEffect(() => {
+    const checkScheduledOrders = () => {
+      const now = new Date();
+      const alertIds: string[] = [];
+
+      orders.forEach(order => {
+        if (order.status === "scheduled" && order.scheduledDate && order.scheduledTime) {
+          const [day, month, year] = order.scheduledDate.split('/').map(Number);
+          const [hour, minute] = order.scheduledTime.split(':').map(Number);
+          const scheduledDateTime = new Date(year, month - 1, day, hour, minute);
+          const diffMinutes = (scheduledDateTime.getTime() - now.getTime()) / (1000 * 60);
+
+          if (diffMinutes <= 30 && diffMinutes > -5) {
+            alertIds.push(order.id);
+          }
+        }
+      });
+
+      setScheduledAlerts(alertIds);
+    };
+
+    checkScheduledOrders();
+    const interval = setInterval(checkScheduledOrders, 30000);
+    return () => clearInterval(interval);
+  }, [orders]);
+
     return orders.filter(order => order.status === status);
   };
 
