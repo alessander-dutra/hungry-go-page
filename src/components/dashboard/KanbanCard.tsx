@@ -3,7 +3,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, X, Phone, MapPin, Clock, Eye, Printer } from "lucide-react";
+import { CheckCircle, X, Phone, MapPin, Clock, Eye, Printer, CalendarClock } from "lucide-react";
 import { toast } from "sonner";
 
 interface OrderItem {
