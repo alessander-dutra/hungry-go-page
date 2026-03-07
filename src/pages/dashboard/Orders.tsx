@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import KanbanColumn from "@/components/dashboard/KanbanColumn";
 import KanbanCard from "@/components/dashboard/KanbanCard";
 import OrderDetailsModal from "@/components/dashboard/OrderDetailsModal";
@@ -72,6 +74,27 @@ const Orders = () => {
   const isMobile = useIsMobile();
   const { playSound } = useOrderAlerts();
   const [scheduledAlerts, setScheduledAlerts] = useState<string[]>([]);
+
+  const allColumns = [
+    { id: "scheduled" as const, label: "Agendados", color: "bg-purple-500" },
+    { id: "pending" as const, label: "Pendentes", color: "bg-yellow-500" },
+    { id: "preparing" as const, label: "Preparando", color: "bg-orange-500" },
+    { id: "ready" as const, label: "Prontos", color: "bg-green-500" },
+    { id: "delivered" as const, label: "Entregues", color: "bg-blue-500" },
+    { id: "cancelled" as const, label: "Cancelados", color: "bg-red-500" },
+  ];
+
+  const [visibleColumns, setVisibleColumns] = useState<string[]>(
+    allColumns.map(c => c.id)
+  );
+
+  const toggleColumn = (columnId: string) => {
+    setVisibleColumns(prev =>
+      prev.includes(columnId)
+        ? prev.filter(id => id !== columnId)
+        : [...prev, columnId]
+    );
+  };
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -491,10 +514,29 @@ const Orders = () => {
                 <List className="h-4 w-4" />
               </Button>
             </div>
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4 mr-2" />
-              Filtros
-            </Button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Filter className="h-4 w-4 mr-2" />
+                  Colunas ({visibleColumns.length}/{allColumns.length})
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-52 p-3" align="end">
+                <p className="text-sm font-medium mb-2">Exibir colunas</p>
+                <div className="space-y-2">
+                  {allColumns.map(col => (
+                    <label key={col.id} className="flex items-center gap-2 cursor-pointer text-sm">
+                      <Checkbox
+                        checked={visibleColumns.includes(col.id)}
+                        onCheckedChange={() => toggleColumn(col.id)}
+                      />
+                      <div className={`w-2 h-2 rounded-full ${col.color}`} />
+                      {col.label}
+                    </label>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </CardContent>
       </Card>
@@ -516,7 +558,9 @@ const Orders = () => {
       {viewMode === "list" ? (
         /* List View */
         <div className="space-y-2">
-          {(["pending", "preparing", "ready", "scheduled", "delivered", "cancelled"] as const).map(status => {
+          {(["pending", "preparing", "ready", "scheduled", "delivered", "cancelled"] as const)
+            .filter(status => visibleColumns.includes(status))
+            .map(status => {
             const statusOrders = getOrdersByStatus(status);
             if (statusOrders.length === 0) return null;
             const statusLabels: Record<string, string> = {
@@ -597,37 +641,49 @@ const Orders = () => {
           onDragEnd={handleDragEnd}
         >
           <div className="overflow-x-auto pb-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 min-h-[calc(100vh-400px)] min-w-[320px]">
-              <KanbanColumn id="scheduled" title="Agendados" count={getStatusCount("scheduled")} color="bg-purple-100 text-purple-800" itemIds={getOrdersByStatus("scheduled").map(o => o.id)}>
-                {getOrdersByStatus("scheduled").map((order) => (
-                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
-                ))}
-              </KanbanColumn>
-              <KanbanColumn id="pending" title="Pendentes" count={getStatusCount("pending")} color="bg-yellow-100 text-yellow-800" itemIds={getOrdersByStatus("pending").map(o => o.id)}>
-                {getOrdersByStatus("pending").map((order) => (
-                  <KanbanCard key={order.id} {...order} onAccept={handleAcceptOrder} onCancel={handleCancelOrder} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
-                ))}
-              </KanbanColumn>
-              <KanbanColumn id="preparing" title="Preparando" count={getStatusCount("preparing")} color="bg-orange-100 text-orange-800" itemIds={getOrdersByStatus("preparing").map(o => o.id)}>
-                {getOrdersByStatus("preparing").map((order) => (
-                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
-                ))}
-              </KanbanColumn>
-              <KanbanColumn id="ready" title="Prontos" count={getStatusCount("ready")} color="bg-green-100 text-green-800" itemIds={getOrdersByStatus("ready").map(o => o.id)}>
-                {getOrdersByStatus("ready").map((order) => (
-                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
-                ))}
-              </KanbanColumn>
-              <KanbanColumn id="delivered" title="Entregues" count={getStatusCount("delivered")} color="bg-blue-100 text-blue-800" itemIds={getOrdersByStatus("delivered").map(o => o.id)}>
-                {getOrdersByStatus("delivered").map((order) => (
-                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
-                ))}
-              </KanbanColumn>
-              <KanbanColumn id="cancelled" title="Cancelados" count={getStatusCount("cancelled")} color="bg-red-100 text-red-800" itemIds={getOrdersByStatus("cancelled").map(o => o.id)}>
-                {getOrdersByStatus("cancelled").map((order) => (
-                  <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
-                ))}
-              </KanbanColumn>
+            <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 min-h-[calc(100vh-400px)] min-w-[320px]`} style={{ gridTemplateColumns: visibleColumns.length > 3 ? `repeat(${Math.min(visibleColumns.length, 6)}, minmax(0, 1fr))` : undefined }}>
+              {visibleColumns.includes("scheduled") && (
+                <KanbanColumn id="scheduled" title="Agendados" count={getStatusCount("scheduled")} color="bg-purple-100 text-purple-800" itemIds={getOrdersByStatus("scheduled").map(o => o.id)}>
+                  {getOrdersByStatus("scheduled").map((order) => (
+                    <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
+                  ))}
+                </KanbanColumn>
+              )}
+              {visibleColumns.includes("pending") && (
+                <KanbanColumn id="pending" title="Pendentes" count={getStatusCount("pending")} color="bg-yellow-100 text-yellow-800" itemIds={getOrdersByStatus("pending").map(o => o.id)}>
+                  {getOrdersByStatus("pending").map((order) => (
+                    <KanbanCard key={order.id} {...order} onAccept={handleAcceptOrder} onCancel={handleCancelOrder} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
+                  ))}
+                </KanbanColumn>
+              )}
+              {visibleColumns.includes("preparing") && (
+                <KanbanColumn id="preparing" title="Preparando" count={getStatusCount("preparing")} color="bg-orange-100 text-orange-800" itemIds={getOrdersByStatus("preparing").map(o => o.id)}>
+                  {getOrdersByStatus("preparing").map((order) => (
+                    <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
+                  ))}
+                </KanbanColumn>
+              )}
+              {visibleColumns.includes("ready") && (
+                <KanbanColumn id="ready" title="Prontos" count={getStatusCount("ready")} color="bg-green-100 text-green-800" itemIds={getOrdersByStatus("ready").map(o => o.id)}>
+                  {getOrdersByStatus("ready").map((order) => (
+                    <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
+                  ))}
+                </KanbanColumn>
+              )}
+              {visibleColumns.includes("delivered") && (
+                <KanbanColumn id="delivered" title="Entregues" count={getStatusCount("delivered")} color="bg-blue-100 text-blue-800" itemIds={getOrdersByStatus("delivered").map(o => o.id)}>
+                  {getOrdersByStatus("delivered").map((order) => (
+                    <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
+                  ))}
+                </KanbanColumn>
+              )}
+              {visibleColumns.includes("cancelled") && (
+                <KanbanColumn id="cancelled" title="Cancelados" count={getStatusCount("cancelled")} color="bg-red-100 text-red-800" itemIds={getOrdersByStatus("cancelled").map(o => o.id)}>
+                  {getOrdersByStatus("cancelled").map((order) => (
+                    <KanbanCard key={order.id} {...order} onViewDetails={handleViewDetails} onPrint={handlePrintOrder} />
+                  ))}
+                </KanbanColumn>
+              )}
             </div>
           </div>
 
