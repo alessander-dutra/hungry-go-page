@@ -258,6 +258,7 @@ const Orders = () => {
     return () => clearInterval(interval);
   }, [orders]);
 
+  const getOrdersByStatus = (status: string) => {
     return orders.filter(order => order.status === status);
   };
 
