@@ -514,10 +514,29 @@ const Orders = () => {
                 <List className="h-4 w-4" />
               </Button>
             </div>
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4 mr-2" />
-              Filtros
-            </Button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Filter className="h-4 w-4 mr-2" />
+                  Colunas ({visibleColumns.length}/{allColumns.length})
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-52 p-3" align="end">
+                <p className="text-sm font-medium mb-2">Exibir colunas</p>
+                <div className="space-y-2">
+                  {allColumns.map(col => (
+                    <label key={col.id} className="flex items-center gap-2 cursor-pointer text-sm">
+                      <Checkbox
+                        checked={visibleColumns.includes(col.id)}
+                        onCheckedChange={() => toggleColumn(col.id)}
+                      />
+                      <div className={`w-2 h-2 rounded-full ${col.color}`} />
+                      {col.label}
+                    </label>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </CardContent>
       </Card>
