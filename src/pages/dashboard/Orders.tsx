@@ -558,7 +558,9 @@ const Orders = () => {
       {viewMode === "list" ? (
         /* List View */
         <div className="space-y-2">
-          {(["pending", "preparing", "ready", "scheduled", "delivered", "cancelled"] as const).map(status => {
+          {(["pending", "preparing", "ready", "scheduled", "delivered", "cancelled"] as const)
+            .filter(status => visibleColumns.includes(status))
+            .map(status => {
             const statusOrders = getOrdersByStatus(status);
             if (statusOrders.length === 0) return null;
             const statusLabels: Record<string, string> = {
