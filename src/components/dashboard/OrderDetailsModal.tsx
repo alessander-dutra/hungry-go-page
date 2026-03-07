@@ -51,6 +51,8 @@ interface Order {
   estimatedTime: string;
   customerNotes?: string;
   statusHistory?: StatusHistory[];
+  scheduledDate?: string;
+  scheduledTime?: string;
 }
 
 interface OrderDetailsModalProps {
