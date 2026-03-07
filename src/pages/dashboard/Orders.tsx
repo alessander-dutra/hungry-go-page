@@ -74,6 +74,27 @@ const Orders = () => {
   const isMobile = useIsMobile();
   const { playSound } = useOrderAlerts();
   const [scheduledAlerts, setScheduledAlerts] = useState<string[]>([]);
+
+  const allColumns = [
+    { id: "scheduled" as const, label: "Agendados", color: "bg-purple-500" },
+    { id: "pending" as const, label: "Pendentes", color: "bg-yellow-500" },
+    { id: "preparing" as const, label: "Preparando", color: "bg-orange-500" },
+    { id: "ready" as const, label: "Prontos", color: "bg-green-500" },
+    { id: "delivered" as const, label: "Entregues", color: "bg-blue-500" },
+    { id: "cancelled" as const, label: "Cancelados", color: "bg-red-500" },
+  ];
+
+  const [visibleColumns, setVisibleColumns] = useState<string[]>(
+    allColumns.map(c => c.id)
+  );
+
+  const toggleColumn = (columnId: string) => {
+    setVisibleColumns(prev =>
+      prev.includes(columnId)
+        ? prev.filter(id => id !== columnId)
+        : [...prev, columnId]
+    );
+  };
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
