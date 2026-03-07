@@ -51,6 +51,8 @@ interface Order {
   estimatedTime: string;
   customerNotes?: string;
   statusHistory?: StatusHistory[];
+  scheduledDate?: string;
+  scheduledTime?: string;
 }
 
 interface OrderDetailsModalProps {
@@ -324,6 +326,17 @@ const OrderDetailsModal = ({
                 </div>
               </div>
             </div>
+
+            {/* Scheduled Date/Time */}
+            {currentOrder.status === "scheduled" && currentOrder.scheduledDate && currentOrder.scheduledTime && (
+              <div className="flex items-center gap-3 text-sm bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-300 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
+                <Clock className="h-5 w-5" />
+                <div>
+                  <p className="font-semibold">Agendado para</p>
+                  <p>{currentOrder.scheduledDate} às {currentOrder.scheduledTime}</p>
+                </div>
+              </div>
+            )}
 
             {/* Time Info */}
             <div className="flex items-center justify-between text-sm text-muted-foreground bg-muted/50 rounded-lg p-4">

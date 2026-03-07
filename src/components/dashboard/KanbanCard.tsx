@@ -3,7 +3,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, X, Phone, MapPin, Clock, Eye, Printer } from "lucide-react";
+import { CheckCircle, X, Phone, MapPin, Clock, Eye, Printer, CalendarClock } from "lucide-react";
 import { toast } from "sonner";
 
 interface OrderItem {
@@ -23,6 +23,8 @@ interface KanbanCardProps {
   createdAt: string;
   estimatedTime: string;
   customerNotes?: string;
+  scheduledDate?: string;
+  scheduledTime?: string;
   onAccept?: (id: string) => void;
   onCancel?: (id: string) => void;
   onViewDetails?: (id: string) => void;
@@ -39,6 +41,8 @@ const KanbanCard = ({
   status,
   createdAt,
   estimatedTime,
+  scheduledDate,
+  scheduledTime,
   onAccept,
   onCancel,
   onViewDetails,
@@ -163,6 +167,16 @@ const KanbanCard = ({
             <span className="line-clamp-2">{address}</span>
           </div>
         </div>
+
+        {/* Scheduled Date/Time */}
+        {status === "scheduled" && scheduledDate && scheduledTime && (
+          <div className="flex items-center gap-2 text-xs bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-300 rounded-md px-2.5 py-1.5 border border-purple-200 dark:border-purple-800">
+            <CalendarClock className="h-3.5 w-3.5 flex-shrink-0" />
+            <span className="font-medium">
+              {scheduledDate} às {scheduledTime}
+            </span>
+          </div>
+        )}
 
         {/* Items */}
         <div className="space-y-1 border-t pt-2 sm:pt-3">

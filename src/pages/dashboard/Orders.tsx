@@ -8,6 +8,7 @@ import OrderDetailsModal from "@/components/dashboard/OrderDetailsModal";
 import OrderAlertSettings from "@/components/dashboard/OrderAlertSettings";
 import PrintTicketModal from "@/components/dashboard/PrintTicketModal";
 import { useOrderAlerts } from "@/hooks/useOrderAlerts";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import {
   DndContext,
   DragEndEvent,
@@ -31,7 +32,9 @@ import {
   Phone,
   MapPin,
   Eye,
-  Printer
+  Printer,
+  CalendarClock,
+  Bell
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
@@ -54,6 +57,8 @@ interface Order {
   estimatedTime: string;
   customerNotes?: string;
   statusHistory?: StatusHistory[];
+  scheduledDate?: string;
+  scheduledTime?: string;
 }
 
 const Orders = () => {
@@ -66,7 +71,7 @@ const Orders = () => {
   const [viewMode, setViewMode] = useState<"kanban" | "list">("kanban");
   const isMobile = useIsMobile();
   const { playSound } = useOrderAlerts();
-  
+  const [scheduledAlerts, setScheduledAlerts] = useState<string[]>([]);
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -199,9 +204,11 @@ const Orders = () => {
       status: "scheduled",
       createdAt: "10:30",
       estimatedTime: "18:00",
+      scheduledDate: new Date(Date.now() + 30 * 60 * 1000).toLocaleDateString('pt-BR'),
+      scheduledTime: new Date(Date.now() + 30 * 60 * 1000).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
       customerNotes: "Entregar após às 18h",
       statusHistory: [
-        { status: "scheduled", timestamp: "10:30", note: "Pedido agendado para 18:00" }
+        { status: "scheduled", timestamp: "10:30", note: "Pedido agendado" }
       ]
     },
     {
@@ -223,6 +230,33 @@ const Orders = () => {
       ]
     }
   ]);
+
+  // Check scheduled orders proximity every 30 seconds
+  useEffect(() => {
+    const checkScheduledOrders = () => {
+      const now = new Date();
+      const alertIds: string[] = [];
+
+      orders.forEach(order => {
+        if (order.status === "scheduled" && order.scheduledDate && order.scheduledTime) {
+          const [day, month, year] = order.scheduledDate.split('/').map(Number);
+          const [hour, minute] = order.scheduledTime.split(':').map(Number);
+          const scheduledDateTime = new Date(year, month - 1, day, hour, minute);
+          const diffMinutes = (scheduledDateTime.getTime() - now.getTime()) / (1000 * 60);
+
+          if (diffMinutes <= 30 && diffMinutes > -5) {
+            alertIds.push(order.id);
+          }
+        }
+      });
+
+      setScheduledAlerts(alertIds);
+    };
+
+    checkScheduledOrders();
+    const interval = setInterval(checkScheduledOrders, 30000);
+    return () => clearInterval(interval);
+  }, [orders]);
 
   const getOrdersByStatus = (status: string) => {
     return orders.filter(order => order.status === status);
@@ -465,6 +499,20 @@ const Orders = () => {
         </CardContent>
       </Card>
 
+      {/* Scheduled Alerts */}
+      {scheduledAlerts.length > 0 && (
+        <Alert className="border-orange-300 bg-orange-50 dark:bg-orange-950/30 dark:border-orange-800">
+          <Bell className="h-4 w-4 text-orange-600" />
+          <AlertTitle className="text-orange-800 dark:text-orange-300">Pedidos agendados próximos!</AlertTitle>
+          <AlertDescription className="text-orange-700 dark:text-orange-400">
+            {scheduledAlerts.length === 1
+              ? `O pedido #${scheduledAlerts[0]} está agendado para os próximos 30 minutos.`
+              : `${scheduledAlerts.length} pedidos estão agendados para os próximos 30 minutos: ${scheduledAlerts.map(id => `#${id}`).join(', ')}`
+            }
+          </AlertDescription>
+        </Alert>
+      )}
+
       {viewMode === "list" ? (
         /* List View */
         <div className="space-y-2">
@@ -508,6 +556,12 @@ const Orders = () => {
                           <div className="mt-1 text-xs text-muted-foreground">
                             {order.items.map(i => `${i.quantity}x ${i.name}`).join(", ")}
                           </div>
+                          {order.status === "scheduled" && order.scheduledDate && order.scheduledTime && (
+                            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/30 rounded px-2 py-1 w-fit border border-purple-200 dark:border-purple-800">
+                              <CalendarClock className="h-3 w-3" />
+                              <span className="font-medium">Agendado: {order.scheduledDate} às {order.scheduledTime}</span>
+                            </div>
+                          )}
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           <span className="font-bold text-sm sm:text-base">R$ {order.total.toFixed(2)}</span>
