@@ -41,6 +41,8 @@ const KanbanCard = ({
   status,
   createdAt,
   estimatedTime,
+  scheduledDate,
+  scheduledTime,
   onAccept,
   onCancel,
   onViewDetails,
