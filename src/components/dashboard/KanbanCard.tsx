@@ -23,6 +23,8 @@ interface KanbanCardProps {
   createdAt: string;
   estimatedTime: string;
   customerNotes?: string;
+  scheduledDate?: string;
+  scheduledTime?: string;
   onAccept?: (id: string) => void;
   onCancel?: (id: string) => void;
   onViewDetails?: (id: string) => void;
