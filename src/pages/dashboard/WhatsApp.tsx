@@ -21,8 +21,12 @@ import {
   Volume2,
   Calendar,
   History,
-  Mic
+  Mic,
+  Play,
+  Pause,
+  Volume2 as VolumeIcon
 } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 const WhatsApp = () => {
   const [historyTab, setHistoryTab] = useState<"messages" | "voice">("messages");
