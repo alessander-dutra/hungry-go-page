@@ -83,6 +83,7 @@ export function DashboardSidebar() {
         </div>
 
         {/* Main Navigation */}
+        <div className="flex-1 overflow-y-auto">
         <SidebarGroup>
           <SidebarGroupLabel>Principal</SidebarGroupLabel>
           <SidebarGroupContent>
