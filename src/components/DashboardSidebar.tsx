@@ -62,7 +62,7 @@ export function DashboardSidebar() {
 
   return (
     <Sidebar className={collapsed ? "w-14" : "w-64"} collapsible="icon">
-      <SidebarContent>
+      <SidebarContent className="overflow-hidden flex flex-col">
         {/* Header */}
         <div className="p-4 border-b border-border">
           {!collapsed ? (
