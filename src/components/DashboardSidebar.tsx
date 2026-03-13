@@ -62,7 +62,7 @@ export function DashboardSidebar() {
 
   return (
     <Sidebar className={collapsed ? "w-14" : "w-64"} collapsible="icon">
-      <SidebarContent className="overflow-hidden flex flex-col">
+      <SidebarContent>
         {/* Header */}
         <div className="p-4 border-b border-border">
           {!collapsed ? (
@@ -83,59 +83,57 @@ export function DashboardSidebar() {
         </div>
 
         {/* Main Navigation */}
-        <div className="flex-1 overflow-y-auto">
-          {/* Main Navigation */}
-          <SidebarGroup>
-            <SidebarGroupLabel>Principal</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {mainItems.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <NavLink 
-                        to={item.url} 
-                        className={getNavCls(item.url, item.exact)}
-                        end={item.exact}
-                      >
-                        <item.icon className="h-4 w-4" />
-                        {!collapsed && (
-                          <div className="flex items-center justify-between flex-1">
-                            <span>{item.title}</span>
-                            {item.badge && (
-                              <Badge variant="secondary" className="ml-auto">
-                                {item.badge}
-                              </Badge>
-                            )}
-                          </div>
-                        )}
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Principal</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {mainItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <NavLink 
+                      to={item.url} 
+                      className={getNavCls(item.url, item.exact)}
+                      end={item.exact}
+                    >
+                      <item.icon className="h-4 w-4" />
+                      {!collapsed && (
+                        <div className="flex items-center justify-between flex-1">
+                          <span>{item.title}</span>
+                          {item.badge && (
+                            <Badge variant="secondary" className="ml-auto">
+                              {item.badge}
+                            </Badge>
+                          )}
+                        </div>
+                      )}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
 
-          {/* Business Navigation */}
-          <SidebarGroup>
-            <SidebarGroupLabel>Negócio</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {businessItems.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <NavLink to={item.url} className={getNavCls(item.url)}>
-                        <item.icon className="h-4 w-4" />
-                        {!collapsed && <span>{item.title}</span>}
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </div>
+        {/* Business Navigation */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Negócio</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {businessItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <NavLink to={item.url} className={getNavCls(item.url)}>
+                      <item.icon className="h-4 w-4" />
+                      {!collapsed && <span>{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
 
+        {/* Collapse Toggle */}
         <div className="px-2 py-1 border-t border-border">
           <SidebarTrigger className="w-full flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors">
             {collapsed ? (
