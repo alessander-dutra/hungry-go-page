@@ -1,5 +1,7 @@
 import { Routes, Route } from "react-router-dom";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import { Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import Overview from "./dashboard/Overview";
 import Menu from "./dashboard/Menu";
