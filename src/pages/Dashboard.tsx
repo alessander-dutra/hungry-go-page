@@ -17,7 +17,7 @@ const Dashboard = () => {
         <div className="flex-1 flex flex-col">
           {/* Header */}
           <header className="h-16 border-b border-border bg-white/95 backdrop-blur-md flex items-center px-4 lg:px-6">
-            <SidebarTrigger className="mr-4" />
+            
             <div className="flex items-center justify-between flex-1">
               <div>
                 <h1 className="text-xl font-semibold">Dashboard</h1>
