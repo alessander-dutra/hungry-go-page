@@ -133,9 +133,10 @@ const NotificationCenter = () => {
             </CardDescription>
           </div>
           {unreadCount > 0 && (
-            <Button variant="outline" size="sm" onClick={markAllAsRead}>
-              <CheckCircle className="h-4 w-4 mr-2" />
-              Marcar todas como lidas
+            <Button variant="outline" size="sm" onClick={markAllAsRead} className="text-xs whitespace-nowrap">
+              <CheckCircle className="h-4 w-4 mr-1 shrink-0" />
+              <span className="hidden sm:inline">Marcar todas como lidas</span>
+              <span className="sm:hidden">Lidas</span>
             </Button>
           )}
         </div>
