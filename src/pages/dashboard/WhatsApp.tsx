@@ -21,14 +21,39 @@ import {
   Volume2,
   Calendar,
   History,
-  Mic
+  Mic,
+  Play,
+  Pause,
+  Volume2 as VolumeIcon
 } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 const WhatsApp = () => {
   const [historyTab, setHistoryTab] = useState<"messages" | "voice">("messages");
   const [historyFilter, setHistoryFilter] = useState("all");
   const [historyDateFilter, setHistoryDateFilter] = useState("7days");
   const [historySearch, setHistorySearch] = useState("");
+  const [playingAudioId, setPlayingAudioId] = useState<string | null>(null);
+  const [audioProgress, setAudioProgress] = useState<Record<string, number>>({});
+
+  const toggleAudio = (id: string) => {
+    if (playingAudioId === id) {
+      setPlayingAudioId(null);
+    } else {
+      setPlayingAudioId(id);
+      // Simulate audio progress
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 2;
+        setAudioProgress(prev => ({ ...prev, [id]: progress }));
+        if (progress >= 100) {
+          clearInterval(interval);
+          setPlayingAudioId(null);
+          setAudioProgress(prev => ({ ...prev, [id]: 0 }));
+        }
+      }, 100);
+    }
+  };
 
   // Mock data
   const stats = [
@@ -382,6 +407,28 @@ const WhatsApp = () => {
                           </div>
                           <p className="text-xs text-muted-foreground mb-1">{item.phone}</p>
                           <p className="text-xs truncate">{item.order}</p>
+                          
+                          {/* Audio Player */}
+                          <div className="flex items-center gap-2 mt-2 p-2 bg-muted/30 rounded-md">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 w-7 p-0 shrink-0"
+                              onClick={(e) => { e.stopPropagation(); toggleAudio(item.id); }}
+                            >
+                              {playingAudioId === item.id ? (
+                                <Pause className="h-3.5 w-3.5" />
+                              ) : (
+                                <Play className="h-3.5 w-3.5" />
+                              )}
+                            </Button>
+                            <div className="flex-1 min-w-0">
+                              <Progress value={audioProgress[item.id] || 0} className="h-1.5" />
+                            </div>
+                            <span className="text-[10px] text-muted-foreground shrink-0">{item.duration}</span>
+                            <VolumeIcon className="h-3 w-3 text-muted-foreground shrink-0" />
+                          </div>
+
                           <div className="flex items-center justify-between mt-1.5 text-[10px] text-muted-foreground">
                             <span>⏱ {item.duration}</span>
                             <span>{item.date}</span>
