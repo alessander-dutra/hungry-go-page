@@ -29,6 +29,27 @@ const WhatsApp = () => {
   const [historyFilter, setHistoryFilter] = useState("all");
   const [historyDateFilter, setHistoryDateFilter] = useState("7days");
   const [historySearch, setHistorySearch] = useState("");
+  const [playingAudioId, setPlayingAudioId] = useState<string | null>(null);
+  const [audioProgress, setAudioProgress] = useState<Record<string, number>>({});
+
+  const toggleAudio = (id: string) => {
+    if (playingAudioId === id) {
+      setPlayingAudioId(null);
+    } else {
+      setPlayingAudioId(id);
+      // Simulate audio progress
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 2;
+        setAudioProgress(prev => ({ ...prev, [id]: progress }));
+        if (progress >= 100) {
+          clearInterval(interval);
+          setPlayingAudioId(null);
+          setAudioProgress(prev => ({ ...prev, [id]: 0 }));
+        }
+      }, 100);
+    }
+  };
 
   // Mock data
   const stats = [
