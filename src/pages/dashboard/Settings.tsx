@@ -188,6 +188,44 @@ const Settings = () => {
     e.target.value = "";
   };
 
+  const handleBannerUpload = () => {
+    bannerInputRef.current?.click();
+  };
+
+  const handleBannerFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast({
+        title: "Formato inválido",
+        description: "Por favor, selecione um arquivo de imagem (JPG, PNG, etc.).",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      toast({
+        title: "Arquivo muito grande",
+        description: "O tamanho máximo permitido para o banner é 10MB.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setBannerPreview(event.target?.result as string);
+      toast({
+        title: "✅ Banner atualizado!",
+        description: "O novo banner foi carregado com sucesso.",
+      });
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
   const updateSchedule = (index: number, field: string, value: any) => {
     const newSchedule = [...schedule];
     newSchedule[index] = { ...newSchedule[index], [field]: value };
