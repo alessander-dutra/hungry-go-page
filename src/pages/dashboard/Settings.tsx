@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -66,6 +66,8 @@ const Settings = () => {
   const [saving, setSaving] = useState(false);
   const [isVoiceEnabled, setIsVoiceEnabled] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const logoInputRef = useRef<HTMLInputElement>(null);
   
   // Restaurant Info State
   const [restaurantInfo, setRestaurantInfo] = useState<RestaurantInfo>({
@@ -147,10 +149,41 @@ const Settings = () => {
   };
 
   const handleLogoUpload = () => {
-    toast({
-      title: "Upload de logo",
-      description: "Funcionalidade de upload será implementada em breve.",
-    });
+    logoInputRef.current?.click();
+  };
+
+  const handleLogoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast({
+        title: "Formato inválido",
+        description: "Por favor, selecione um arquivo de imagem (JPG, PNG, etc.).",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "Arquivo muito grande",
+        description: "O tamanho máximo permitido é 5MB.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setLogoPreview(event.target?.result as string);
+      toast({
+        title: "✅ Logo atualizada!",
+        description: "A nova logo foi carregada com sucesso.",
+      });
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
   };
 
   const updateSchedule = (index: number, field: string, value: any) => {
@@ -247,13 +280,31 @@ const Settings = () => {
               <div className="border rounded-lg p-4">
                 <h4 className="font-medium mb-3">Logo do Restaurante</h4>
                 <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 rounded-lg gradient-hero flex items-center justify-center">
-                    <span className="text-white font-bold text-2xl">R</span>
+                  {logoPreview ? (
+                    <img src={logoPreview} alt="Logo" className="w-16 h-16 rounded-lg object-cover" />
+                  ) : (
+                    <div className="w-16 h-16 rounded-lg gradient-hero flex items-center justify-center">
+                      <span className="text-white font-bold text-2xl">R</span>
+                    </div>
+                  )}
+                  <div className="flex flex-col gap-2">
+                    <Button variant="outline" onClick={handleLogoUpload}>
+                      <Upload className="h-4 w-4 mr-2" />
+                      {logoPreview ? "Trocar Logo" : "Alterar Logo"}
+                    </Button>
+                    {logoPreview && (
+                      <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => setLogoPreview(null)}>
+                        Remover Logo
+                      </Button>
+                    )}
                   </div>
-                  <Button variant="outline" onClick={handleLogoUpload}>
-                    <Upload className="h-4 w-4 mr-2" />
-                    Alterar Logo
-                  </Button>
+                  <input
+                    ref={logoInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleLogoFileChange}
+                  />
                 </div>
               </div>
               <div className="border rounded-lg p-4">
