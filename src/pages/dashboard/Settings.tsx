@@ -171,41 +171,67 @@ const Settings = () => {
     }
   };
 
+  const uploadToStorage = async (file: File, folder: string): Promise<string | null> => {
+    const ext = file.name.split('.').pop();
+    const fileName = `${folder}/${Date.now()}.${ext}`;
+    
+    const { error } = await supabase.storage
+      .from('restaurant-assets')
+      .upload(fileName, file, { upsert: true });
+
+    if (error) {
+      toast({ title: "Erro no upload", description: error.message, variant: "destructive" });
+      return null;
+    }
+
+    const { data: urlData } = supabase.storage
+      .from('restaurant-assets')
+      .getPublicUrl(fileName);
+
+    return urlData.publicUrl;
+  };
+
+  const upsertSettings = async (updates: Record<string, string | null>) => {
+    if (settingsId) {
+      await supabase
+        .from('restaurant_settings')
+        .update({ ...updates, updated_at: new Date().toISOString() })
+        .eq('id', settingsId);
+    } else {
+      const { data } = await supabase
+        .from('restaurant_settings')
+        .insert(updates)
+        .select('id')
+        .single();
+      if (data) setSettingsId(data.id);
+    }
+  };
+
   const handleLogoUpload = () => {
     logoInputRef.current?.click();
   };
 
-  const handleLogoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      toast({
-        title: "Formato inválido",
-        description: "Por favor, selecione um arquivo de imagem (JPG, PNG, etc.).",
-        variant: "destructive",
-      });
+      toast({ title: "Formato inválido", description: "Selecione uma imagem (JPG, PNG, etc.).", variant: "destructive" });
       return;
     }
-
     if (file.size > 5 * 1024 * 1024) {
-      toast({
-        title: "Arquivo muito grande",
-        description: "O tamanho máximo permitido é 5MB.",
-        variant: "destructive",
-      });
+      toast({ title: "Arquivo muito grande", description: "Máximo permitido: 5MB.", variant: "destructive" });
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setLogoPreview(event.target?.result as string);
-      toast({
-        title: "✅ Logo atualizada!",
-        description: "A nova logo foi carregada com sucesso.",
-      });
-    };
-    reader.readAsDataURL(file);
+    setUploadingLogo(true);
+    const url = await uploadToStorage(file, 'logos');
+    if (url) {
+      setLogoPreview(url);
+      await upsertSettings({ logo_url: url });
+      toast({ title: "✅ Logo atualizada!", description: "A logo foi salva com sucesso." });
+    }
+    setUploadingLogo(false);
     e.target.value = "";
   };
 
@@ -213,38 +239,38 @@ const Settings = () => {
     bannerInputRef.current?.click();
   };
 
-  const handleBannerFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBannerFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      toast({
-        title: "Formato inválido",
-        description: "Por favor, selecione um arquivo de imagem (JPG, PNG, etc.).",
-        variant: "destructive",
-      });
+      toast({ title: "Formato inválido", description: "Selecione uma imagem (JPG, PNG, etc.).", variant: "destructive" });
       return;
     }
-
     if (file.size > 10 * 1024 * 1024) {
-      toast({
-        title: "Arquivo muito grande",
-        description: "O tamanho máximo permitido para o banner é 10MB.",
-        variant: "destructive",
-      });
+      toast({ title: "Arquivo muito grande", description: "Máximo permitido para banner: 10MB.", variant: "destructive" });
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setBannerPreview(event.target?.result as string);
-      toast({
-        title: "✅ Banner atualizado!",
-        description: "O novo banner foi carregado com sucesso.",
-      });
-    };
-    reader.readAsDataURL(file);
+    setUploadingBanner(true);
+    const url = await uploadToStorage(file, 'banners');
+    if (url) {
+      setBannerPreview(url);
+      await upsertSettings({ banner_url: url });
+      toast({ title: "✅ Banner atualizado!", description: "O banner foi salvo com sucesso." });
+    }
+    setUploadingBanner(false);
     e.target.value = "";
+  };
+
+  const handleRemoveLogo = async () => {
+    setLogoPreview(null);
+    await upsertSettings({ logo_url: null });
+  };
+
+  const handleRemoveBanner = async () => {
+    setBannerPreview(null);
+    await upsertSettings({ banner_url: null });
   };
 
   const updateSchedule = (index: number, field: string, value: any) => {
