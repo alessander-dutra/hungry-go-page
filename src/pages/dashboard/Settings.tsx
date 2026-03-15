@@ -413,12 +413,12 @@ const Settings = () => {
                     </div>
                   )}
                   <div className="flex gap-2">
-                    <Button variant="outline" onClick={handleBannerUpload} className="flex-1">
-                      <Upload className="h-4 w-4 mr-2" />
-                      {bannerPreview ? "Trocar Banner" : "Enviar Banner (1920x512px)"}
+                    <Button variant="outline" onClick={handleBannerUpload} className="flex-1" disabled={uploadingBanner}>
+                      {uploadingBanner ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Upload className="h-4 w-4 mr-2" />}
+                      {uploadingBanner ? "Enviando..." : bannerPreview ? "Trocar Banner" : "Enviar Banner (1920x512px)"}
                     </Button>
                     {bannerPreview && (
-                      <Button variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setBannerPreview(null)}>
+                      <Button variant="ghost" className="text-destructive hover:text-destructive" onClick={handleRemoveBanner}>
                         Remover
                       </Button>
                     )}
