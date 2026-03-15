@@ -353,16 +353,36 @@ const Settings = () => {
                   Tamanho ideal: <strong>1920x512 pixels</strong> (proporção aproximadamente 4:1)
                 </p>
                 <div className="space-y-3">
-                  <div className="w-full h-32 rounded-lg bg-muted border-2 border-dashed border-border flex items-center justify-center">
-                    <div className="text-center">
-                      <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                      <p className="text-sm text-muted-foreground">Nenhum banner carregado</p>
+                  {bannerPreview ? (
+                    <div className="relative w-full h-32 rounded-lg overflow-hidden">
+                      <img src={bannerPreview} alt="Banner" className="w-full h-full object-cover" />
                     </div>
+                  ) : (
+                    <div className="w-full h-32 rounded-lg bg-muted border-2 border-dashed border-border flex items-center justify-center">
+                      <div className="text-center">
+                        <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                        <p className="text-sm text-muted-foreground">Nenhum banner carregado</p>
+                      </div>
+                    </div>
+                  )}
+                  <div className="flex gap-2">
+                    <Button variant="outline" onClick={handleBannerUpload} className="flex-1">
+                      <Upload className="h-4 w-4 mr-2" />
+                      {bannerPreview ? "Trocar Banner" : "Enviar Banner (1920x512px)"}
+                    </Button>
+                    {bannerPreview && (
+                      <Button variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setBannerPreview(null)}>
+                        Remover
+                      </Button>
+                    )}
                   </div>
-                  <Button variant="outline" onClick={handleLogoUpload} className="w-full">
-                    <Upload className="h-4 w-4 mr-2" />
-                    Enviar Banner (1920x512px)
-                  </Button>
+                  <input
+                    ref={bannerInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleBannerFileChange}
+                  />
                 </div>
               </div>
             </CardContent>
