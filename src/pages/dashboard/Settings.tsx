@@ -66,6 +66,8 @@ const Settings = () => {
   const [saving, setSaving] = useState(false);
   const [isVoiceEnabled, setIsVoiceEnabled] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const logoInputRef = useRef<HTMLInputElement>(null);
   
   // Restaurant Info State
   const [restaurantInfo, setRestaurantInfo] = useState<RestaurantInfo>({
