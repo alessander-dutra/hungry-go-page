@@ -67,7 +67,9 @@ const Settings = () => {
   const [isVoiceEnabled, setIsVoiceEnabled] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [bannerPreview, setBannerPreview] = useState<string | null>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
+  const bannerInputRef = useRef<HTMLInputElement>(null);
   
   // Restaurant Info State
   const [restaurantInfo, setRestaurantInfo] = useState<RestaurantInfo>({
@@ -180,6 +182,44 @@ const Settings = () => {
       toast({
         title: "✅ Logo atualizada!",
         description: "A nova logo foi carregada com sucesso.",
+      });
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
+  const handleBannerUpload = () => {
+    bannerInputRef.current?.click();
+  };
+
+  const handleBannerFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast({
+        title: "Formato inválido",
+        description: "Por favor, selecione um arquivo de imagem (JPG, PNG, etc.).",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      toast({
+        title: "Arquivo muito grande",
+        description: "O tamanho máximo permitido para o banner é 10MB.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setBannerPreview(event.target?.result as string);
+      toast({
+        title: "✅ Banner atualizado!",
+        description: "O novo banner foi carregado com sucesso.",
       });
     };
     reader.readAsDataURL(file);
@@ -313,16 +353,36 @@ const Settings = () => {
                   Tamanho ideal: <strong>1920x512 pixels</strong> (proporção aproximadamente 4:1)
                 </p>
                 <div className="space-y-3">
-                  <div className="w-full h-32 rounded-lg bg-muted border-2 border-dashed border-border flex items-center justify-center">
-                    <div className="text-center">
-                      <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                      <p className="text-sm text-muted-foreground">Nenhum banner carregado</p>
+                  {bannerPreview ? (
+                    <div className="relative w-full h-32 rounded-lg overflow-hidden">
+                      <img src={bannerPreview} alt="Banner" className="w-full h-full object-cover" />
                     </div>
+                  ) : (
+                    <div className="w-full h-32 rounded-lg bg-muted border-2 border-dashed border-border flex items-center justify-center">
+                      <div className="text-center">
+                        <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                        <p className="text-sm text-muted-foreground">Nenhum banner carregado</p>
+                      </div>
+                    </div>
+                  )}
+                  <div className="flex gap-2">
+                    <Button variant="outline" onClick={handleBannerUpload} className="flex-1">
+                      <Upload className="h-4 w-4 mr-2" />
+                      {bannerPreview ? "Trocar Banner" : "Enviar Banner (1920x512px)"}
+                    </Button>
+                    {bannerPreview && (
+                      <Button variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setBannerPreview(null)}>
+                        Remover
+                      </Button>
+                    )}
                   </div>
-                  <Button variant="outline" onClick={handleLogoUpload} className="w-full">
-                    <Upload className="h-4 w-4 mr-2" />
-                    Enviar Banner (1920x512px)
-                  </Button>
+                  <input
+                    ref={bannerInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleBannerFileChange}
+                  />
                 </div>
               </div>
             </CardContent>
