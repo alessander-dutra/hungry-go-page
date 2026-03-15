@@ -375,9 +375,9 @@ const Settings = () => {
                     </div>
                   )}
                   <div className="flex flex-col gap-2">
-                    <Button variant="outline" onClick={handleLogoUpload}>
-                      <Upload className="h-4 w-4 mr-2" />
-                      {logoPreview ? "Trocar Logo" : "Alterar Logo"}
+                    <Button variant="outline" onClick={handleLogoUpload} disabled={uploadingLogo}>
+                      {uploadingLogo ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Upload className="h-4 w-4 mr-2" />}
+                      {uploadingLogo ? "Enviando..." : logoPreview ? "Trocar Logo" : "Alterar Logo"}
                     </Button>
                     {logoPreview && (
                       <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => setLogoPreview(null)}>
