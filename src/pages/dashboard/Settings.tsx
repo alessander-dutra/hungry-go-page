@@ -280,13 +280,31 @@ const Settings = () => {
               <div className="border rounded-lg p-4">
                 <h4 className="font-medium mb-3">Logo do Restaurante</h4>
                 <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 rounded-lg gradient-hero flex items-center justify-center">
-                    <span className="text-white font-bold text-2xl">R</span>
+                  {logoPreview ? (
+                    <img src={logoPreview} alt="Logo" className="w-16 h-16 rounded-lg object-cover" />
+                  ) : (
+                    <div className="w-16 h-16 rounded-lg gradient-hero flex items-center justify-center">
+                      <span className="text-white font-bold text-2xl">R</span>
+                    </div>
+                  )}
+                  <div className="flex flex-col gap-2">
+                    <Button variant="outline" onClick={handleLogoUpload}>
+                      <Upload className="h-4 w-4 mr-2" />
+                      {logoPreview ? "Trocar Logo" : "Alterar Logo"}
+                    </Button>
+                    {logoPreview && (
+                      <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => setLogoPreview(null)}>
+                        Remover Logo
+                      </Button>
+                    )}
                   </div>
-                  <Button variant="outline" onClick={handleLogoUpload}>
-                    <Upload className="h-4 w-4 mr-2" />
-                    Alterar Logo
-                  </Button>
+                  <input
+                    ref={logoInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleLogoFileChange}
+                  />
                 </div>
               </div>
               <div className="border rounded-lg p-4">
