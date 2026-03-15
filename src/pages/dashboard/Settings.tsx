@@ -149,10 +149,41 @@ const Settings = () => {
   };
 
   const handleLogoUpload = () => {
-    toast({
-      title: "Upload de logo",
-      description: "Funcionalidade de upload será implementada em breve.",
-    });
+    logoInputRef.current?.click();
+  };
+
+  const handleLogoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast({
+        title: "Formato inválido",
+        description: "Por favor, selecione um arquivo de imagem (JPG, PNG, etc.).",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "Arquivo muito grande",
+        description: "O tamanho máximo permitido é 5MB.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setLogoPreview(event.target?.result as string);
+      toast({
+        title: "✅ Logo atualizada!",
+        description: "A nova logo foi carregada com sucesso.",
+      });
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
   };
 
   const updateSchedule = (index: number, field: string, value: any) => {
