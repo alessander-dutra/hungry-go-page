@@ -380,7 +380,7 @@ const Settings = () => {
                       {uploadingLogo ? "Enviando..." : logoPreview ? "Trocar Logo" : "Alterar Logo"}
                     </Button>
                     {logoPreview && (
-                      <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => setLogoPreview(null)}>
+                      <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={handleRemoveLogo}>
                         Remover Logo
                       </Button>
                     )}
