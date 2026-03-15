@@ -69,8 +69,28 @@ const Settings = () => {
   const [isListening, setIsListening] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [bannerPreview, setBannerPreview] = useState<string | null>(null);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingBanner, setUploadingBanner] = useState(false);
+  const [settingsId, setSettingsId] = useState<string | null>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
+
+  // Load saved settings on mount
+  useEffect(() => {
+    const loadSettings = async () => {
+      const { data } = await supabase
+        .from('restaurant_settings')
+        .select('*')
+        .limit(1)
+        .maybeSingle();
+      if (data) {
+        setSettingsId(data.id);
+        setLogoPreview(data.logo_url);
+        setBannerPreview(data.banner_url);
+      }
+    };
+    loadSettings();
+  }, []);
   
   // Restaurant Info State
   const [restaurantInfo, setRestaurantInfo] = useState<RestaurantInfo>({
