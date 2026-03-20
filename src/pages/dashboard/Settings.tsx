@@ -295,7 +295,57 @@ const Settings = () => {
     await upsertSettings({ banner_url: null });
   };
 
-  const updateSchedule = (index: number, field: string, value: any) => {
+  const handleHeroUpload = () => heroInputRef.current?.click();
+
+  const handleHeroFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Formato inválido", description: "Selecione uma imagem.", variant: "destructive" });
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast({ title: "Arquivo muito grande", description: "Máximo: 10MB.", variant: "destructive" });
+      return;
+    }
+    setUploadingHero(true);
+    const url = await uploadToStorage(file, 'hero');
+    if (url) {
+      setHeroImagePreview(url);
+      await upsertSettings({ hero_image_url: url } as any);
+      toast({ title: "✅ Imagem hero atualizada!" });
+    }
+    setUploadingHero(false);
+    e.target.value = "";
+  };
+
+  const handleCarouselUpload = (index: number) => carouselInputRefs.current[index]?.click();
+
+  const handleCarouselFileChange = async (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Formato inválido", description: "Selecione uma imagem.", variant: "destructive" });
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast({ title: "Arquivo muito grande", description: "Máximo: 10MB.", variant: "destructive" });
+      return;
+    }
+    setUploadingCarousel(index);
+    const url = await uploadToStorage(file, 'carousel');
+    if (url) {
+      const newPreviews = [...carouselPreviews];
+      newPreviews[index] = url;
+      setCarouselPreviews(newPreviews);
+      const key = `carousel_image_${index + 1}`;
+      await upsertSettings({ [key]: url } as any);
+      toast({ title: `✅ Imagem ${CAROUSEL_LABELS[index].label} atualizada!` });
+    }
+    setUploadingCarousel(null);
+    e.target.value = "";
+  };
+
     const newSchedule = [...schedule];
     newSchedule[index] = { ...newSchedule[index], [field]: value };
     setSchedule(newSchedule);
