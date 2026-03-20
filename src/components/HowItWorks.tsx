@@ -12,33 +12,33 @@ import hamburguerArtesanalDefault from "@/assets/hamburguer-artesanal.jpg";
 import pizzaMargheritaDefault from "@/assets/pizza-margherita.jpg";
 import saladaDefault from "@/assets/salada-caesar.jpg";
 
-const carouselSlides = [
+const defaultSlides = [
 {
-  src: dashboardImage,
+  src: dashboardImageDefault,
   alt: "Dashboard DeliveryPro",
   label: "📊 Dashboard Completo",
   description: "Gerencie pedidos em tempo real"
 },
 {
-  src: whatsappBot,
+  src: whatsappBotDefault,
   alt: "Integração WhatsApp",
   label: "💬 WhatsApp Integrado",
   description: "Pedidos direto no seu celular"
 },
 {
-  src: hamburguerArtesanal,
+  src: hamburguerArtesanalDefault,
   alt: "Cardápio Digital",
   label: "🍔 Cardápio Digital",
   description: "Monte seu menu com fotos incríveis"
 },
 {
-  src: pizzaMargherita,
+  src: pizzaMargheritaDefault,
   alt: "Pizza no cardápio",
   label: "🍕 Qualquer Culinária",
   description: "Funciona para todo tipo de restaurante"
 },
 {
-  src: salada,
+  src: saladaDefault,
   alt: "Salada no cardápio",
   label: "🥗 Diversidade de Produtos",
   description: "Adicione quantos itens quiser"
