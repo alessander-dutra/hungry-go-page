@@ -63,17 +63,31 @@ interface NotificationPref {
   active: boolean;
 }
 
+const CAROUSEL_LABELS = [
+  { key: "carousel_image_1", label: "Dashboard", emoji: "📊" },
+  { key: "carousel_image_2", label: "WhatsApp", emoji: "💬" },
+  { key: "carousel_image_3", label: "Cardápio", emoji: "🍔" },
+  { key: "carousel_image_4", label: "Culinária", emoji: "🍕" },
+  { key: "carousel_image_5", label: "Produtos", emoji: "🥗" },
+];
+
 const Settings = () => {
   const [saving, setSaving] = useState(false);
   const [isVoiceEnabled, setIsVoiceEnabled] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [bannerPreview, setBannerPreview] = useState<string | null>(null);
+  const [heroImagePreview, setHeroImagePreview] = useState<string | null>(null);
+  const [carouselPreviews, setCarouselPreviews] = useState<(string | null)[]>([null, null, null, null, null]);
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [uploadingBanner, setUploadingBanner] = useState(false);
+  const [uploadingHero, setUploadingHero] = useState(false);
+  const [uploadingCarousel, setUploadingCarousel] = useState<number | null>(null);
   const [settingsId, setSettingsId] = useState<string | null>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
+  const heroInputRef = useRef<HTMLInputElement>(null);
+  const carouselInputRefs = useRef<(HTMLInputElement | null)[]>([null, null, null, null, null]);
 
   // Load saved settings on mount
   useEffect(() => {
