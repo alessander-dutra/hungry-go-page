@@ -101,6 +101,14 @@ const Settings = () => {
         setSettingsId(data.id);
         setLogoPreview(data.logo_url);
         setBannerPreview(data.banner_url);
+        setHeroImagePreview((data as any).hero_image_url ?? null);
+        setCarouselPreviews([
+          (data as any).carousel_image_1 ?? null,
+          (data as any).carousel_image_2 ?? null,
+          (data as any).carousel_image_3 ?? null,
+          (data as any).carousel_image_4 ?? null,
+          (data as any).carousel_image_5 ?? null,
+        ]);
       }
     };
     loadSettings();
