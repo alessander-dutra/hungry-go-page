@@ -33,6 +33,22 @@ const clients = [{
   gradient: "from-green-500 to-emerald-500"
 }];
 const Hero = () => {
+  const [heroImage, setHeroImage] = useState(heroImageDefault);
+
+  useEffect(() => {
+    const load = async () => {
+      const { data } = await supabase
+        .from('restaurant_settings')
+        .select('*')
+        .limit(1)
+        .maybeSingle();
+      if (data && (data as any).hero_image_url) {
+        setHeroImage((data as any).hero_image_url);
+      }
+    };
+    load();
+  }, []);
+
   return <section className="pt-20 pb-16 lg:pt-28 lg:pb-24 hero-pattern">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-center">
