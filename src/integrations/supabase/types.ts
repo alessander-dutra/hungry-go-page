@@ -17,21 +17,39 @@ export type Database = {
       restaurant_settings: {
         Row: {
           banner_url: string | null
+          carousel_image_1: string | null
+          carousel_image_2: string | null
+          carousel_image_3: string | null
+          carousel_image_4: string | null
+          carousel_image_5: string | null
           created_at: string
+          hero_image_url: string | null
           id: string
           logo_url: string | null
           updated_at: string
         }
         Insert: {
           banner_url?: string | null
+          carousel_image_1?: string | null
+          carousel_image_2?: string | null
+          carousel_image_3?: string | null
+          carousel_image_4?: string | null
+          carousel_image_5?: string | null
           created_at?: string
+          hero_image_url?: string | null
           id?: string
           logo_url?: string | null
           updated_at?: string
         }
         Update: {
           banner_url?: string | null
+          carousel_image_1?: string | null
+          carousel_image_2?: string | null
+          carousel_image_3?: string | null
+          carousel_image_4?: string | null
+          carousel_image_5?: string | null
           created_at?: string
+          hero_image_url?: string | null
           id?: string
           logo_url?: string | null
           updated_at?: string
