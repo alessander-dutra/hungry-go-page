@@ -46,6 +46,26 @@ const defaultSlides = [
 
 
 const HowItWorks = () => {
+  const [carouselSlides, setCarouselSlides] = useState(defaultSlides);
+
+  useEffect(() => {
+    const load = async () => {
+      const { data } = await supabase
+        .from('restaurant_settings')
+        .select('*')
+        .limit(1)
+        .maybeSingle();
+      if (data) {
+        const d = data as any;
+        const keys = ['carousel_image_1', 'carousel_image_2', 'carousel_image_3', 'carousel_image_4', 'carousel_image_5'];
+        const updated = defaultSlides.map((slide, i) => 
+          d[keys[i]] ? { ...slide, src: d[keys[i]] } : slide
+        );
+        setCarouselSlides(updated);
+      }
+    };
+    load();
+  }, []);
   const steps = [
   {
     number: "01",
