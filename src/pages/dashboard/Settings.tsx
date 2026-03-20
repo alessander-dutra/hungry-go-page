@@ -508,7 +508,76 @@ const Settings = () => {
             </CardContent>
           </Card>
 
+          {/* Hero & Carousel Images */}
           <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Upload className="h-5 w-5" />
+                Imagens da Página Inicial
+              </CardTitle>
+              <CardDescription>Altere a imagem principal (hero) e as imagens do carrossel</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Hero Image */}
+              <div className="border rounded-lg p-4">
+                <h4 className="font-medium mb-3">Imagem Principal (Hero)</h4>
+                <p className="text-sm text-muted-foreground mb-3">Imagem exibida na seção principal da página inicial</p>
+                <div className="space-y-3">
+                  {heroImagePreview ? (
+                    <div className="relative w-full h-40 rounded-lg overflow-hidden">
+                      <img src={heroImagePreview} alt="Hero" className="w-full h-full object-cover" />
+                    </div>
+                  ) : (
+                    <div className="w-full h-40 rounded-lg bg-muted border-2 border-dashed border-border flex items-center justify-center">
+                      <div className="text-center">
+                        <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                        <p className="text-sm text-muted-foreground">Usando imagem padrão</p>
+                      </div>
+                    </div>
+                  )}
+                  <Button variant="outline" onClick={handleHeroUpload} disabled={uploadingHero}>
+                    {uploadingHero ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Upload className="h-4 w-4 mr-2" />}
+                    {uploadingHero ? "Enviando..." : heroImagePreview ? "Trocar Imagem Hero" : "Enviar Imagem Hero"}
+                  </Button>
+                  <input ref={heroInputRef} type="file" accept="image/*" className="hidden" onChange={handleHeroFileChange} />
+                </div>
+              </div>
+
+              {/* Carousel Images */}
+              <div className="border rounded-lg p-4">
+                <h4 className="font-medium mb-3">Imagens do Carrossel</h4>
+                <p className="text-sm text-muted-foreground mb-3">Imagens exibidas no carrossel da seção "Como Funciona"</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {CAROUSEL_LABELS.map((item, index) => (
+                    <div key={item.key} className="border rounded-lg p-3 space-y-2">
+                      <div className="text-sm font-medium">{item.emoji} {item.label}</div>
+                      {carouselPreviews[index] ? (
+                        <div className="relative w-full h-24 rounded overflow-hidden">
+                          <img src={carouselPreviews[index]!} alt={item.label} className="w-full h-full object-cover" />
+                        </div>
+                      ) : (
+                        <div className="w-full h-24 rounded bg-muted border-2 border-dashed border-border flex items-center justify-center">
+                          <p className="text-xs text-muted-foreground">Padrão</p>
+                        </div>
+                      )}
+                      <Button variant="outline" size="sm" className="w-full" onClick={() => handleCarouselUpload(index)} disabled={uploadingCarousel === index}>
+                        {uploadingCarousel === index ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <Upload className="h-3 w-3 mr-1" />}
+                        {uploadingCarousel === index ? "..." : "Trocar"}
+                      </Button>
+                      <input
+                        ref={(el) => { carouselInputRefs.current[index] = el; }}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleCarouselFileChange(e, index)}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Clock className="h-5 w-5" />
