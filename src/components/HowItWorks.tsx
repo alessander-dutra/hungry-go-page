@@ -5,11 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, CheckCircle, Clock, Rocket, Settings, ChevronLeft, ChevronRight } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import dashboardImage from "@/assets/dashboard-preview.jpg";
-import whatsappBot from "@/assets/whatsapp-bot.jpg";
-import hamburguerArtesanal from "@/assets/hamburguer-artesanal.jpg";
-import pizzaMargherita from "@/assets/pizza-margherita.jpg";
-import salada from "@/assets/salada-caesar.jpg";
+import { supabase } from "@/integrations/supabase/client";
+import dashboardImageDefault from "@/assets/dashboard-preview.jpg";
+import whatsappBotDefault from "@/assets/whatsapp-bot.jpg";
+import hamburguerArtesanalDefault from "@/assets/hamburguer-artesanal.jpg";
+import pizzaMargheritaDefault from "@/assets/pizza-margherita.jpg";
+import saladaDefault from "@/assets/salada-caesar.jpg";
 
 const carouselSlides = [
 {
