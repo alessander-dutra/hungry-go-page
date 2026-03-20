@@ -346,6 +346,7 @@ const Settings = () => {
     e.target.value = "";
   };
 
+  const updateSchedule = (index: number, field: string, value: any) => {
     const newSchedule = [...schedule];
     newSchedule[index] = { ...newSchedule[index], [field]: value };
     setSchedule(newSchedule);
