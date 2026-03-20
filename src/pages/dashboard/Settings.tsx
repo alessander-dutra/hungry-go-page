@@ -92,11 +92,22 @@ const Settings = () => {
   // Load saved settings on mount
   useEffect(() => {
     const loadSettings = async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('restaurant_settings')
         .select('*')
+        .order('updated_at', { ascending: false })
         .limit(1)
         .maybeSingle();
+
+      if (error) {
+        toast({
+          title: "Erro ao carregar imagens",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
       if (data) {
         setSettingsId(data.id);
         setLogoPreview(data.logo_url);
@@ -214,18 +225,59 @@ const Settings = () => {
   };
 
   const upsertSettings = async (updates: Record<string, string | null>) => {
+    const payload = { ...updates, updated_at: new Date().toISOString() };
+
     if (settingsId) {
-      await supabase
+      const { error } = await supabase
         .from('restaurant_settings')
-        .update({ ...updates, updated_at: new Date().toISOString() })
+        .update(payload)
         .eq('id', settingsId);
-    } else {
-      const { data } = await supabase
+
+      if (error) {
+        throw error;
+      }
+
+      return;
+    }
+
+    const { data: existing, error: existingError } = await supabase
+      .from('restaurant_settings')
+      .select('id')
+      .order('updated_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (existingError) {
+      throw existingError;
+    }
+
+    if (existing?.id) {
+      setSettingsId(existing.id);
+
+      const { error } = await supabase
         .from('restaurant_settings')
-        .insert(updates)
-        .select('id')
-        .single();
-      if (data) setSettingsId(data.id);
+        .update(payload)
+        .eq('id', existing.id);
+
+      if (error) {
+        throw error;
+      }
+
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('restaurant_settings')
+      .insert(payload)
+      .select('id')
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    if (data) {
+      setSettingsId(data.id);
     }
   };
 
