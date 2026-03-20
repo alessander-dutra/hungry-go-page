@@ -578,6 +578,7 @@ const Settings = () => {
             </CardContent>
           </Card>
           <Card>
+            <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Clock className="h-5 w-5" />
                 Horário de Funcionamento
