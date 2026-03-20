@@ -1,43 +1,44 @@
-import { useCallback } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, CheckCircle, Clock, Rocket, Settings, ChevronLeft, ChevronRight } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import dashboardImage from "@/assets/dashboard-preview.jpg";
-import whatsappBot from "@/assets/whatsapp-bot.jpg";
-import hamburguerArtesanal from "@/assets/hamburguer-artesanal.jpg";
-import pizzaMargherita from "@/assets/pizza-margherita.jpg";
-import salada from "@/assets/salada-caesar.jpg";
+import { supabase } from "@/integrations/supabase/client";
+import dashboardImageDefault from "@/assets/dashboard-preview.jpg";
+import whatsappBotDefault from "@/assets/whatsapp-bot.jpg";
+import hamburguerArtesanalDefault from "@/assets/hamburguer-artesanal.jpg";
+import pizzaMargheritaDefault from "@/assets/pizza-margherita.jpg";
+import saladaDefault from "@/assets/salada-caesar.jpg";
 
-const carouselSlides = [
+const defaultSlides = [
 {
-  src: dashboardImage,
+  src: dashboardImageDefault,
   alt: "Dashboard DeliveryPro",
   label: "📊 Dashboard Completo",
   description: "Gerencie pedidos em tempo real"
 },
 {
-  src: whatsappBot,
+  src: whatsappBotDefault,
   alt: "Integração WhatsApp",
   label: "💬 WhatsApp Integrado",
   description: "Pedidos direto no seu celular"
 },
 {
-  src: hamburguerArtesanal,
+  src: hamburguerArtesanalDefault,
   alt: "Cardápio Digital",
   label: "🍔 Cardápio Digital",
   description: "Monte seu menu com fotos incríveis"
 },
 {
-  src: pizzaMargherita,
+  src: pizzaMargheritaDefault,
   alt: "Pizza no cardápio",
   label: "🍕 Qualquer Culinária",
   description: "Funciona para todo tipo de restaurante"
 },
 {
-  src: salada,
+  src: saladaDefault,
   alt: "Salada no cardápio",
   label: "🥗 Diversidade de Produtos",
   description: "Adicione quantos itens quiser"
@@ -45,6 +46,26 @@ const carouselSlides = [
 
 
 const HowItWorks = () => {
+  const [carouselSlides, setCarouselSlides] = useState(defaultSlides);
+
+  useEffect(() => {
+    const load = async () => {
+      const { data } = await supabase
+        .from('restaurant_settings')
+        .select('*')
+        .limit(1)
+        .maybeSingle();
+      if (data) {
+        const d = data as any;
+        const keys = ['carousel_image_1', 'carousel_image_2', 'carousel_image_3', 'carousel_image_4', 'carousel_image_5'];
+        const updated = defaultSlides.map((slide, i) => 
+          d[keys[i]] ? { ...slide, src: d[keys[i]] } : slide
+        );
+        setCarouselSlides(updated);
+      }
+    };
+    load();
+  }, []);
   const steps = [
   {
     number: "01",
