@@ -1,6 +1,8 @@
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Star, TrendingUp, Users, Utensils, Pizza, Coffee, Beef } from "lucide-react";
-import heroImage from "@/assets/hero-delivery.jpg";
+import heroImageDefault from "@/assets/hero-delivery.jpg";
 const clients = [{
   name: "Burger House",
   category: "Hamburguer",
