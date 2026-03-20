@@ -92,11 +92,22 @@ const Settings = () => {
   // Load saved settings on mount
   useEffect(() => {
     const loadSettings = async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('restaurant_settings')
         .select('*')
+        .order('updated_at', { ascending: false })
         .limit(1)
         .maybeSingle();
+
+      if (error) {
+        toast({
+          title: "Erro ao carregar imagens",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
       if (data) {
         setSettingsId(data.id);
         setLogoPreview(data.logo_url);
@@ -214,18 +225,59 @@ const Settings = () => {
   };
 
   const upsertSettings = async (updates: Record<string, string | null>) => {
+    const payload = { ...updates, updated_at: new Date().toISOString() };
+
     if (settingsId) {
-      await supabase
+      const { error } = await supabase
         .from('restaurant_settings')
-        .update({ ...updates, updated_at: new Date().toISOString() })
+        .update(payload)
         .eq('id', settingsId);
-    } else {
-      const { data } = await supabase
+
+      if (error) {
+        throw error;
+      }
+
+      return;
+    }
+
+    const { data: existing, error: existingError } = await supabase
+      .from('restaurant_settings')
+      .select('id')
+      .order('updated_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (existingError) {
+      throw existingError;
+    }
+
+    if (existing?.id) {
+      setSettingsId(existing.id);
+
+      const { error } = await supabase
         .from('restaurant_settings')
-        .insert(updates)
-        .select('id')
-        .single();
-      if (data) setSettingsId(data.id);
+        .update(payload)
+        .eq('id', existing.id);
+
+      if (error) {
+        throw error;
+      }
+
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('restaurant_settings')
+      .insert(payload)
+      .select('id')
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    if (data) {
+      setSettingsId(data.id);
     }
   };
 
@@ -247,14 +299,20 @@ const Settings = () => {
     }
 
     setUploadingLogo(true);
-    const url = await uploadToStorage(file, 'logos');
-    if (url) {
-      setLogoPreview(url);
+    try {
+      const url = await uploadToStorage(file, 'logos');
+      if (!url) return;
+
       await upsertSettings({ logo_url: url });
+      setLogoPreview(url);
       toast({ title: "✅ Logo atualizada!", description: "A logo foi salva com sucesso." });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Não foi possível salvar a logo.";
+      toast({ title: "Erro ao salvar logo", description: message, variant: "destructive" });
+    } finally {
+      setUploadingLogo(false);
+      e.target.value = "";
     }
-    setUploadingLogo(false);
-    e.target.value = "";
   };
 
   const handleBannerUpload = () => {
@@ -275,24 +333,40 @@ const Settings = () => {
     }
 
     setUploadingBanner(true);
-    const url = await uploadToStorage(file, 'banners');
-    if (url) {
-      setBannerPreview(url);
+    try {
+      const url = await uploadToStorage(file, 'banners');
+      if (!url) return;
+
       await upsertSettings({ banner_url: url });
+      setBannerPreview(url);
       toast({ title: "✅ Banner atualizado!", description: "O banner foi salvo com sucesso." });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Não foi possível salvar o banner.";
+      toast({ title: "Erro ao salvar banner", description: message, variant: "destructive" });
+    } finally {
+      setUploadingBanner(false);
+      e.target.value = "";
     }
-    setUploadingBanner(false);
-    e.target.value = "";
   };
 
   const handleRemoveLogo = async () => {
-    setLogoPreview(null);
-    await upsertSettings({ logo_url: null });
+    try {
+      await upsertSettings({ logo_url: null });
+      setLogoPreview(null);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Não foi possível remover a logo.";
+      toast({ title: "Erro ao remover logo", description: message, variant: "destructive" });
+    }
   };
 
   const handleRemoveBanner = async () => {
-    setBannerPreview(null);
-    await upsertSettings({ banner_url: null });
+    try {
+      await upsertSettings({ banner_url: null });
+      setBannerPreview(null);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Não foi possível remover o banner.";
+      toast({ title: "Erro ao remover banner", description: message, variant: "destructive" });
+    }
   };
 
   const handleHeroUpload = () => heroInputRef.current?.click();
@@ -308,15 +382,22 @@ const Settings = () => {
       toast({ title: "Arquivo muito grande", description: "Máximo: 10MB.", variant: "destructive" });
       return;
     }
+
     setUploadingHero(true);
-    const url = await uploadToStorage(file, 'hero');
-    if (url) {
-      setHeroImagePreview(url);
+    try {
+      const url = await uploadToStorage(file, 'hero');
+      if (!url) return;
+
       await upsertSettings({ hero_image_url: url } as any);
+      setHeroImagePreview(url);
       toast({ title: "✅ Imagem hero atualizada!" });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Não foi possível salvar a imagem hero.";
+      toast({ title: "Erro ao salvar imagem hero", description: message, variant: "destructive" });
+    } finally {
+      setUploadingHero(false);
+      e.target.value = "";
     }
-    setUploadingHero(false);
-    e.target.value = "";
   };
 
   const handleCarouselUpload = (index: number) => carouselInputRefs.current[index]?.click();
@@ -332,18 +413,25 @@ const Settings = () => {
       toast({ title: "Arquivo muito grande", description: "Máximo: 10MB.", variant: "destructive" });
       return;
     }
+
     setUploadingCarousel(index);
-    const url = await uploadToStorage(file, 'carousel');
-    if (url) {
+    try {
+      const url = await uploadToStorage(file, 'carousel');
+      if (!url) return;
+
+      const key = `carousel_image_${index + 1}`;
+      await upsertSettings({ [key]: url } as any);
       const newPreviews = [...carouselPreviews];
       newPreviews[index] = url;
       setCarouselPreviews(newPreviews);
-      const key = `carousel_image_${index + 1}`;
-      await upsertSettings({ [key]: url } as any);
       toast({ title: `✅ Imagem ${CAROUSEL_LABELS[index].label} atualizada!` });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Não foi possível salvar a imagem do carrossel.";
+      toast({ title: "Erro ao salvar imagem", description: message, variant: "destructive" });
+    } finally {
+      setUploadingCarousel(null);
+      e.target.value = "";
     }
-    setUploadingCarousel(null);
-    e.target.value = "";
   };
 
   const updateSchedule = (index: number, field: string, value: any) => {

@@ -1,17 +1,14 @@
-import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { 
-  BarChart3, 
-  ChefHat, 
-  ShoppingBag, 
-  Settings, 
+import {
+  BarChart3,
+  ChefHat,
+  ShoppingBag,
+  Settings,
   Home,
   MessageCircle,
   TrendingUp,
   Users,
   LogOut,
-  ChevronsLeft,
-  ChevronsRight
 } from "lucide-react";
 import {
   Sidebar,
@@ -22,11 +19,11 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useRestaurantBranding } from "@/hooks/useRestaurantBranding";
 
 const mainItems = [
   { title: "Visão Geral", url: "/dashboard", icon: Home, exact: true },
@@ -45,6 +42,7 @@ const businessItems = [
 export function DashboardSidebar() {
   const { state } = useSidebar();
   const location = useLocation();
+  const { logoUrl } = useRestaurantBranding();
   const currentPath = location.pathname;
   const collapsed = state === "collapsed";
 
@@ -60,29 +58,31 @@ export function DashboardSidebar() {
     return active ? "bg-primary text-primary-foreground font-medium" : "hover:bg-muted/50";
   };
 
+  const logoMarkup = logoUrl ? (
+    <img src={logoUrl} alt="Logo do restaurante" className="w-8 h-8 rounded-lg object-cover" />
+  ) : (
+    <div className="w-8 h-8 rounded-lg gradient-hero flex items-center justify-center">
+      <span className="text-white font-bold text-lg">D</span>
+    </div>
+  );
+
   return (
     <Sidebar className={collapsed ? "w-14" : "w-64"} collapsible="icon">
       <SidebarContent>
-        {/* Header */}
         <div className="p-4 border-b border-border">
           {!collapsed ? (
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-lg gradient-hero flex items-center justify-center">
-                <span className="text-white font-bold text-lg">D</span>
-              </div>
+              {logoMarkup}
               <div>
                 <div className="font-semibold text-sm">DeliveryPro</div>
                 <div className="text-xs text-muted-foreground">Restaurante Demo</div>
               </div>
             </div>
           ) : (
-            <div className="w-8 h-8 rounded-lg gradient-hero flex items-center justify-center mx-auto">
-              <span className="text-white font-bold text-lg">D</span>
-            </div>
+            <div className="mx-auto">{logoMarkup}</div>
           )}
         </div>
 
-        {/* Main Navigation */}
         <SidebarGroup>
           <SidebarGroupLabel>Principal</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -90,11 +90,7 @@ export function DashboardSidebar() {
               {mainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <NavLink 
-                      to={item.url} 
-                      className={getNavCls(item.url, item.exact)}
-                      end={item.exact}
-                    >
+                    <NavLink to={item.url} className={getNavCls(item.url, item.exact)} end={item.exact}>
                       <item.icon className="h-4 w-4" />
                       {!collapsed && (
                         <div className="flex items-center justify-between flex-1">
@@ -114,7 +110,6 @@ export function DashboardSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Business Navigation */}
         <SidebarGroup>
           <SidebarGroupLabel>Negócio</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -133,8 +128,6 @@ export function DashboardSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-
-        {/* Bottom Actions */}
         <div className="mt-auto p-4 border-t border-border">
           {!collapsed ? (
             <div className="space-y-2">
