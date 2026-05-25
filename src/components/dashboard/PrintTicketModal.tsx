@@ -54,6 +54,14 @@ const PrintTicketModal = ({ order, open, onOpenChange }: PrintTicketModalProps) 
 
   if (!order) return null;
 
+  const esc = (s: string | number | undefined | null) =>
+    String(s ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+
   const handlePrint = () => {
     const printWindow = window.open("", "_blank");
     if (!printWindow) {
@@ -99,47 +107,47 @@ const PrintTicketModal = ({ order, open, onOpenChange }: PrintTicketModalProps) 
       <!DOCTYPE html>
       <html>
       <head>
-        <title>Pedido #${order.id}</title>
+        <title>Pedido #${esc(order.id)}</title>
         <style>${styles}</style>
       </head>
       <body>
         <div class="header">
-          <h1>Pedido #${order.id}</h1>
-          <p>${order.createdAt} - ${order.estimatedTime}</p>
+          <h1>Pedido #${esc(order.id)}</h1>
+          <p>${esc(order.createdAt)} - ${esc(order.estimatedTime)}</p>
         </div>
         
         <div class="section customer-info">
           <div class="section-title">Cliente</div>
-          <p><strong>${order.customerName}</strong></p>
-          <p>${order.customerPhone}</p>
-          ${includeAddress ? `<p>${order.address}</p>` : ''}
+          <p><strong>${esc(order.customerName)}</strong></p>
+          <p>${esc(order.customerPhone)}</p>
+          ${includeAddress ? `<p>${esc(order.address)}</p>` : ''}
         </div>
         
         <div class="section">
           <div class="section-title">Itens</div>
           ${order.items.map(item => `
             <div class="item">
-              <span>${item.quantity}x ${item.name}</span>
-              <span>R$ ${(item.price * item.quantity).toFixed(2)}</span>
+              <span>${esc(item.quantity)}x ${esc(item.name)}</span>
+              <span>R$ ${esc((item.price * item.quantity).toFixed(2))}</span>
             </div>
           `).join('')}
         </div>
         
         <div class="total">
           <span>Total:</span>
-          <span>R$ ${order.total.toFixed(2)}</span>
+          <span>R$ ${esc(order.total.toFixed(2))}</span>
         </div>
         
         ${includeCustomerNotes && order.customerNotes ? `
           <div class="notes">
             <div class="section-title">Observações:</div>
-            <p>${order.customerNotes}</p>
+            <p>${esc(order.customerNotes)}</p>
           </div>
         ` : ''}
         
         <div class="footer">
           <p>Obrigado pela preferência!</p>
-          <p>${new Date().toLocaleString('pt-BR')}</p>
+          <p>${esc(new Date().toLocaleString('pt-BR'))}</p>
         </div>
       </body>
       </html>
