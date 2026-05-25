@@ -1,10 +1,12 @@
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/hooks/useCart";
 import { useRestaurantBranding } from "@/hooks/useRestaurantBranding";
 import RestaurantHeader from "@/components/restaurant/RestaurantHeader";
 import MenuSection from "@/components/restaurant/MenuSection";
 import Cart from "@/components/restaurant/Cart";
+
 import pizzaMargherita from "@/assets/pizza-margherita.jpg";
 import pizzaPepperoni from "@/assets/pizza-pepperoni.jpg";
 import pizzaPortuguesa from "@/assets/pizza-portuguesa.jpg";
@@ -170,7 +172,25 @@ const Restaurant = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>{`${restaurant.name} — Cardápio e Delivery`}</title>
+        <meta name="description" content={restaurant.description.slice(0, 155)} />
+        <link rel="canonical" href="/restaurant" />
+        <meta property="og:title" content={`${restaurant.name} — Cardápio`} />
+        <meta property="og:description" content={restaurant.description.slice(0, 155)} />
+        <meta property="og:type" content="restaurant.restaurant" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Restaurant",
+          name: restaurant.name,
+          description: restaurant.description,
+          telephone: restaurant.phone,
+          address: restaurant.address,
+          aggregateRating: { "@type": "AggregateRating", ratingValue: restaurant.rating, reviewCount: restaurant.reviewCount },
+        })}</script>
+      </Helmet>
       <RestaurantHeader {...restaurant} />
+
 
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="flex-1">
