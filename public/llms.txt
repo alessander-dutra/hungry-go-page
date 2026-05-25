@@ -1,0 +1,12 @@
+# DeliveryPro
+
+> Plataforma brasileira de delivery com IA, WhatsApp nativo e comissão justa de 5-8% por pedido.
+
+DeliveryPro ajuda restaurantes a gerenciar pedidos, cardápio e atendimento via WhatsApp com inteligência artificial integrada.
+
+## Pages
+
+- [Home](/): Visão geral, recursos, planos e cadastro.
+- [Cadastro](/register): Crie uma conta de restaurante (planos Starter, Professional e Enterprise).
+- [Login](/login): Acesso ao painel do restaurante.
+- [Restaurante](/restaurant): Exemplo de cardápio público de um restaurante.
