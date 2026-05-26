@@ -97,7 +97,7 @@ const SupportChat = ({ isOpen, onClose }: SupportChatProps) => {
           </div>
           <div>
             <h3 className="font-semibold">Suporte DeliveryPro</h3>
-            <p className="text-xs text-white/80">Online agora</p>
+            <p className="text-xs text-white/90">Online agora</p>
           </div>
         </div>
         <Button

@@ -264,25 +264,25 @@ const Overview = () => {
                 </Badge>
               </div>
               <CardTitle className="text-white">Performance</CardTitle>
-              <CardDescription className="text-white/80">
+              <CardDescription className="text-white/90">
                 Métricas do dia
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-white/80">Tempo médio preparo</span>
+                  <span className="text-white/90">Tempo médio preparo</span>
                   <div className="flex items-center">
                     <Clock className="h-4 w-4 mr-1" />
                     <span className="font-semibold">28 min</span>
                   </div>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-white/80">Taxa de conversão</span>
+                  <span className="text-white/90">Taxa de conversão</span>
                   <span className="font-semibold">94.2%</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-white/80">Avaliação média</span>
+                  <span className="text-white/90">Avaliação média</span>
                   <div className="flex items-center">
                     <Star className="h-4 w-4 mr-1 fill-current" />
                     <span className="font-semibold">4.8</span>

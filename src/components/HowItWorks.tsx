@@ -185,7 +185,7 @@ const HowItWorks = () => {
                         {/* Slide label */}
                         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-5">
                           <div className="text-white font-semibold text-lg">{slide.label}</div>
-                          <div className="text-white/80 text-sm">{slide.description}</div>
+                          <div className="text-white/90 text-sm">{slide.description}</div>
                         </div>
                       </div>
                     )}
