@@ -119,7 +119,7 @@ const Hero = () => {
           {/* Hero Image */}
           <div className="relative">
             <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-              <img src={heroImage} alt="DeliveryPro Platform Interface" className="w-full h-auto" />
+              <img src={heroImage} alt="DeliveryPro Platform Interface" className="w-full h-auto" width={1200} height={800} fetchPriority="high" decoding="async" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
             </div>
             
