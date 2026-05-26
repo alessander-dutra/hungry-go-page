@@ -14,10 +14,12 @@ const CartItem = ({ item, onUpdateQuantity, onRemove }: CartItemProps) => {
       {/* Product Image */}
       <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
         {item.image ? (
-          <img 
-            src={item.image} 
+          <img
+            src={item.image}
             alt={item.name}
             className="w-full h-full object-cover rounded-lg"
+            loading="lazy"
+            decoding="async"
           />
         ) : (
           <span className="text-lg">🍽️</span>

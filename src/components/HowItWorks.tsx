@@ -178,9 +178,12 @@ const HowItWorks = () => {
                     {carouselSlides.map((slide, index) =>
                     <div key={index} className="flex-[0_0_100%] min-w-0 relative">
                         <img
-                        src={slide.src}
-                        alt={slide.alt}
-                        className="w-full h-72 lg:h-96 object-cover" />
+                          src={slide.src}
+                          alt={slide.alt}
+                          className="w-full h-72 lg:h-96 object-cover"
+                          loading="lazy"
+                          decoding="async"
+                        />
 
                         {/* Slide label */}
                         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-5">
