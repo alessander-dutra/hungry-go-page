@@ -529,7 +529,7 @@ const Settings = () => {
                 <h4 className="font-medium mb-3">Logo do Restaurante</h4>
                 <div className="flex items-center space-x-4">
                   {logoPreview ? (
-                    <img src={logoPreview} alt="Logo" className="w-16 h-16 rounded-lg object-cover" />
+                    <img src={logoPreview} alt="Logo" className="w-16 h-16 rounded-lg object-cover" loading="lazy" decoding="async" />
                   ) : (
                     <div className="w-16 h-16 rounded-lg gradient-hero flex items-center justify-center">
                       <span className="text-white font-bold text-2xl">R</span>
@@ -563,7 +563,7 @@ const Settings = () => {
                 <div className="space-y-3">
                   {bannerPreview ? (
                     <div className="relative w-full h-32 rounded-lg overflow-hidden">
-                      <img src={bannerPreview} alt="Banner" className="w-full h-full object-cover" />
+                      <img src={bannerPreview} alt="Banner" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                     </div>
                   ) : (
                     <div className="w-full h-32 rounded-lg bg-muted border-2 border-dashed border-border flex items-center justify-center">
@@ -613,7 +613,7 @@ const Settings = () => {
                 <div className="space-y-3">
                   {heroImagePreview ? (
                     <div className="relative w-full h-40 rounded-lg overflow-hidden">
-                      <img src={heroImagePreview} alt="Hero" className="w-full h-full object-cover" />
+                      <img src={heroImagePreview} alt="Hero" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                     </div>
                   ) : (
                     <div className="w-full h-40 rounded-lg bg-muted border-2 border-dashed border-border flex items-center justify-center">
@@ -641,7 +641,7 @@ const Settings = () => {
                       <div className="text-sm font-medium">{item.emoji} {item.label}</div>
                       {carouselPreviews[index] ? (
                         <div className="relative w-full h-24 rounded overflow-hidden">
-                          <img src={carouselPreviews[index]!} alt={item.label} className="w-full h-full object-cover" />
+                          <img src={carouselPreviews[index]!} alt={item.label} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                         </div>
                       ) : (
                         <div className="w-full h-24 rounded bg-muted border-2 border-dashed border-border flex items-center justify-center">

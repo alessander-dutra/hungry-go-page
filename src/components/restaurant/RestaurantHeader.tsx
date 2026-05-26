@@ -43,10 +43,12 @@ const RestaurantHeader = ({
     <div className="relative">
       {/* Hero Image */}
       <div className="h-64 lg:h-96 relative overflow-hidden">
-        <img 
-          src={banner || image} 
+        <img
+          src={banner || image}
           alt={name}
           className="w-full h-full object-cover"
+          loading="lazy"
+          decoding="async"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
         

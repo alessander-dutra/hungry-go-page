@@ -541,10 +541,12 @@ const Menu = () => {
               {/* Image Preview */}
               {imagePreview && !isGeneratingImage && (
                 <div className="relative w-full aspect-video bg-muted rounded-lg overflow-hidden">
-                  <img 
-                    src={imagePreview} 
-                    alt="Preview" 
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <Button
                     variant="destructive"

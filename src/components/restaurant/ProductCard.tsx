@@ -54,10 +54,12 @@ const ProductCard = ({
         {/* Product Image */}
         <div className="aspect-video bg-muted rounded-lg flex items-center justify-center mb-4 relative overflow-hidden">
           {image ? (
-            <img 
-              src={image} 
+            <img
+              src={image}
               alt={name}
               className="w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
             />
           ) : (
             <div className="text-muted-foreground text-4xl">🍽️</div>
