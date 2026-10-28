@@ -9,6 +9,7 @@ import {
   TrendingUp,
   Users,
   LogOut,
+  Menu,
 } from "lucide-react";
 import {
   Sidebar,
@@ -40,7 +41,7 @@ const businessItems = [
 ];
 
 export function DashboardSidebar() {
-  const { state } = useSidebar();
+  const { state, toggleSidebar, isMobile, setOpenMobile } = useSidebar();
   const location = useLocation();
   const { logoUrl } = useRestaurantBranding();
   const currentPath = location.pathname;
@@ -69,13 +70,23 @@ export function DashboardSidebar() {
   return (
     <Sidebar className={collapsed ? "w-14" : "w-64"} collapsible="icon">
       <SidebarContent>
-        <div className="p-4 border-b border-border">
+        <div className={`border-b border-border flex items-center gap-2 ${collapsed ? "p-2 flex-col" : "p-3"}`}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => (isMobile ? setOpenMobile(false) : toggleSidebar())}
+            aria-label={collapsed ? "Expandir menu lateral" : "Recolher menu lateral"}
+            aria-expanded={!collapsed}
+            className="shrink-0"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
           {!collapsed ? (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 min-w-0">
               {logoMarkup}
-              <div>
-                <div className="font-semibold text-sm">DeliveryPro</div>
-                <div className="text-xs text-muted-foreground">Restaurante Demo</div>
+              <div className="min-w-0">
+                <div className="font-semibold text-sm truncate">DeliveryPro</div>
+                <div className="text-xs text-muted-foreground truncate">Restaurante Demo</div>
               </div>
             </div>
           ) : (
