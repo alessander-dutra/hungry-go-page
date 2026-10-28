@@ -2,7 +2,6 @@ import { Routes, Route } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Menu as MenuIcon } from "lucide-react";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
-import { useRestaurantBranding } from "@/hooks/useRestaurantBranding";
 import Overview from "./dashboard/Overview";
 import MenuPage from "./dashboard/Menu";
 import Orders from "./dashboard/Orders";
@@ -12,7 +11,6 @@ import WhatsApp from "./dashboard/WhatsApp";
 import Customers from "./dashboard/Customers";
 
 const Dashboard = () => {
-  const { logoUrl } = useRestaurantBranding();
 
   return (
     <SidebarProvider>
