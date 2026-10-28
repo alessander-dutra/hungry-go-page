@@ -9,6 +9,7 @@ import Orders from "./dashboard/Orders";
 import Settings from "./dashboard/Settings";
 import Analytics from "./dashboard/Analytics";
 import WhatsApp from "./dashboard/WhatsApp";
+import Customers from "./dashboard/Customers";
 
 const Dashboard = () => {
   const { logoUrl } = useRestaurantBranding();
@@ -58,7 +59,7 @@ const Dashboard = () => {
               <Route path="/settings" element={<Settings />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/whatsapp" element={<WhatsApp />} />
-              <Route path="/customers" element={<Analytics />} />
+              <Route path="/customers" element={<Customers />} />
               <Route path="/sales" element={<Analytics />} />
             </Routes>
           </main>
