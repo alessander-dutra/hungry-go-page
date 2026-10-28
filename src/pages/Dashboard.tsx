@@ -36,17 +36,6 @@ const Dashboard = () => {
                   <div className="text-sm font-medium">Restaurante Demo</div>
                   <div className="text-xs text-muted-foreground">Online • Recebendo pedidos</div>
                 </div>
-                {logoUrl ? (
-                  <img
-                    src={logoUrl}
-                    alt="Logo do restaurante"
-                    className="w-8 h-8 lg:w-10 lg:h-10 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-full gradient-hero flex items-center justify-center">
-                    <span className="text-white font-bold text-sm lg:text-base">R</span>
-                  </div>
-                )}
               </div>
             </div>
           </header>
