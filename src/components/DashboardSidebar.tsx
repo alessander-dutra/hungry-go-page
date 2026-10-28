@@ -100,7 +100,7 @@ export function DashboardSidebar() {
             <SidebarMenu>
               {mainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild tooltip={item.title}>
                     <NavLink to={item.url} className={getNavCls(item.url, item.exact)} end={item.exact}>
                       <item.icon className="h-4 w-4" />
                       {!collapsed && (
@@ -127,7 +127,7 @@ export function DashboardSidebar() {
             <SidebarMenu>
               {businessItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild tooltip={item.title}>
                     <NavLink to={item.url} className={getNavCls(item.url)}>
                       <item.icon className="h-4 w-4" />
                       {!collapsed && <span>{item.title}</span>}
@@ -154,7 +154,7 @@ export function DashboardSidebar() {
               </Button>
             </div>
           ) : (
-            <Button variant="ghost" size="icon" className="w-full">
+            <Button variant="ghost" size="icon" className="w-full" title="Sair" aria-label="Sair">
               <LogOut className="h-4 w-4" />
             </Button>
           )}
